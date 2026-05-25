@@ -29,7 +29,6 @@
     overflow-x: hidden;
   }
 
-  /* ── Galaxy background ── */
   #galaxy-canvas {
     position: fixed;
     inset: 0;
@@ -38,7 +37,7 @@
     z-index: 0;
     pointer-events: none;
   }
-  header, .main, #login-screen, #log-modal, #extend-modal, #product-modal, #toast {
+  header, .main, #login-screen, #log-modal, #extend-modal, #toast {
     position: relative;
     z-index: 1;
   }
@@ -53,9 +52,7 @@
     -webkit-backdrop-filter: blur(8px);
   }
 
-  /* ── Header ── */
   header {
-    background: var(--bg2);
     border-bottom: 1px solid var(--border);
     padding: 14px 28px;
     display: flex;
@@ -63,7 +60,6 @@
     gap: 16px;
   }
 
-  /* ── Login overlay ── */
   #login-screen {
     position: fixed; inset: 0;
     background: var(--bg);
@@ -81,10 +77,8 @@
   .login-box h2 { color: var(--neon); margin-bottom: 8px; }
   .login-box p  { color: var(--muted); margin-bottom: 24px; font-size: 13px; }
 
-  /* ── Layout ── */
   .main { padding: 24px 28px; max-width: 1200px; margin: 0 auto; }
 
-  /* ── Stats bar ── */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -120,7 +114,6 @@
   .stat-card.yellow .val { color: var(--yellow); }
   .stat-card.red .val   { color: var(--red); }
 
-  /* ── Create form ── */
   .create-panel {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -145,11 +138,10 @@
     font-family: inherit;
     transition: border-color .15s;
   }
-  input:focus, select:focus { border-color: var(--neon2); }
+  input:focus, select:focus { border-color: var(--neon2); box-shadow: 0 0 0 3px rgba(124,58,237,.15); }
   input[type="text"] { width: 220px; }
   input[type="number"] { width: 80px; }
 
-  /* ── Buttons ── */
   .btn {
     padding: 8px 16px;
     border-radius: 6px;
@@ -185,7 +177,6 @@
   .btn-ghost    { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
   .btn-sm { padding: 4px 10px; font-size: 12px; }
 
-  /* ── Search bar ── */
   .toolbar {
     display: flex;
     gap: 10px;
@@ -208,7 +199,6 @@
   .filter-btn:active { transform: scale(.95); }
   .filter-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(157,95,245,.1); box-shadow: 0 0 12px rgba(157,95,245,.2); }
 
-  /* ── Table ── */
   .table-wrap {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -235,9 +225,7 @@
   }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(157,95,245,.04); }
-  tr.row-enter {
-    animation: rowIn .35s cubic-bezier(.22,1,.36,1) both;
-  }
+  tr.row-enter { animation: rowIn .35s cubic-bezier(.22,1,.36,1) both; }
 
   .key-text {
     font-family: 'Consolas', 'Courier New', monospace;
@@ -265,9 +253,30 @@
   .badge-lifetime { background: rgba(157,95,245,.12); color: var(--neon); border: 1px solid rgba(157,95,245,.3); }
   .badge-lifetime:hover { box-shadow: 0 0 12px rgba(157,95,245,.4); }
 
+  /* ── Badge produit vérifié ── */
+  .badge-verified {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(52,211,153,.1);
+    color: var(--green);
+    border: 1px solid rgba(52,211,153,.25);
+  }
+  .badge-unverified {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    background: rgba(107,107,128,.1);
+    color: var(--muted);
+    border: 1px solid rgba(107,107,128,.2);
+  }
+
   .actions { display: flex; gap: 6px; }
 
-  /* ── Toast ── */
   #toast {
     position: fixed;
     bottom: 24px; right: 24px;
@@ -286,7 +295,6 @@
   #toast.ok   { border-color: var(--green); color: var(--green); box-shadow: 0 4px 20px rgba(52,211,153,.15); }
   #toast.err  { border-color: var(--red);   color: var(--red);   box-shadow: 0 4px 20px rgba(248,113,113,.15); }
 
-  /* ── Modal ── */
   .modal-bg {
     position: fixed; inset: 0;
     background: rgba(0,0,0,.6);
@@ -317,7 +325,7 @@
   .log-row .res { font-weight: 600; }
   .log-row .res.OK, .log-row .res.OK_LINKED { color: var(--green); }
   .log-row .res.EXPIRED, .log-row .res.HWID_MISMATCH { color: var(--yellow); }
-  .log-row .res.REVOKED, .log-row .res.INVALID_KEY { color: var(--red); }
+  .log-row .res.REVOKED, .log-row .res.INVALID_KEY, .log-row .res.WRONG_PRODUCT { color: var(--red); }
 
   .empty-state {
     padding: 40px;
@@ -326,13 +334,14 @@
     font-size: 13px;
   }
 
-  /* ── Input focus glow ── */
-  input:focus, select:focus {
-    border-color: var(--neon2);
-    box-shadow: 0 0 0 3px rgba(124,58,237,.15);
+  /* ── Product tabs ── */
+  .product-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
   }
-
-  /* ── Product tab animations ── */
   .product-tab {
     padding: 7px 16px;
     border-radius: 20px;
@@ -360,93 +369,18 @@
   .product-tab.active .tab-count { background: rgba(157,95,245,.25); }
   .product-tab .tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  /* ── Logo pulse ── */
-  header .logo {
-    background: var(--neon2);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 5px;
-    letter-spacing: 1px;
-    animation: logoPulse 3s ease-in-out infinite;
+  /* ── Product tab tsukasa-cfg highlight ── */
+  .product-tab[data-product="tsukasa-cfg"] {
+    border-color: rgba(124,58,237,.4);
   }
-  header h1 { font-size: 16px; font-weight: 500; color: var(--neon); }
-  header .sep { flex: 1; }
-
-  /* ── Keyframes ── */
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .product-tab[data-product="tsukasa-cfg"].active {
+    border-color: var(--neon);
+    box-shadow: 0 0 18px rgba(157,95,245,.35);
   }
-  @keyframes rowIn {
-    from { opacity: 0; transform: translateX(-10px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(.88) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  @keyframes logoPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
-    50%       { box-shadow: 0 0 16px 4px rgba(124,58,237,.45); }
-  }
-  @keyframes countUp {
-    from { transform: translateY(8px); opacity: 0; }
-    to   { transform: translateY(0);   opacity: 1; }
-  }
-  @keyframes shimmer {
-    0%   { background-position: -400px 0; }
-    100% { background-position: 400px 0; }
-  }
-  .shimmer-text {
-    background: linear-gradient(90deg, var(--neon) 0%, #e0c8ff 40%, var(--neon) 80%);
-    background-size: 400px 100%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmer 3s linear infinite;
-  }
-
-  /* ── Product tabs ── */
-  .product-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .product-tab {
-    padding: 7px 16px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all .15s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .product-tab:hover { border-color: var(--neon2); color: var(--text); }
-  .product-tab.active { border-color: var(--neon); color: var(--neon); background: rgba(157,95,245,.12); }
-  .product-tab .tab-count {
-    background: rgba(255,255,255,.08);
-    border-radius: 10px;
-    padding: 1px 6px;
-    font-size: 11px;
-  }
-  .product-tab.active .tab-count { background: rgba(157,95,245,.25); }
-  .product-tab .tab-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
+  .product-tab .verified-icon {
+    font-size: 10px;
+    color: var(--green);
+    opacity: 0.7;
   }
 
   /* ── Product manager ── */
@@ -486,11 +420,12 @@
     padding: 5px 10px;
     font-size: 12px;
   }
-  .product-chip .chip-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
+  /* Chip spéciale pour tsukasa-cfg */
+  .product-chip[data-id="tsukasa-cfg"] {
+    border-color: rgba(124,58,237,.5);
+    background: rgba(124,58,237,.06);
   }
+  .product-chip .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .product-chip .chip-del {
     cursor: pointer;
     color: var(--muted);
@@ -499,34 +434,57 @@
     margin-left: 2px;
   }
   .product-chip .chip-del:hover { color: var(--red); }
+  .product-chip .chip-del.locked {
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
   .add-product-row {
     display: flex;
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
   }
-  .color-picker-wrap {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .color-picker-wrap { display: flex; align-items: center; gap: 6px; }
   input[type="color"] {
-    width: 34px;
-    height: 34px;
+    width: 34px; height: 34px;
     border-radius: 6px;
     border: 1px solid var(--border);
     background: var(--bg3);
     cursor: pointer;
     padding: 2px;
   }
-
-  /* ── Chip rename ── */
   .product-chip .chip-name {
     cursor: pointer;
     border-bottom: 1px dashed transparent;
     transition: border-color .15s;
   }
   .product-chip .chip-name:hover { border-color: var(--neon2); color: var(--neon); }
+  .product-chip[data-id="tsukasa-cfg"] .chip-name {
+    cursor: default;
+    color: var(--neon);
+  }
+  .product-chip[data-id="tsukasa-cfg"] .chip-name:hover {
+    border-color: transparent;
+    color: var(--neon);
+  }
+
+  /* ── Info box produit vérifié ── */
+  .product-info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(124,58,237,.07);
+    border: 1px solid rgba(124,58,237,.25);
+    border-left: 3px solid var(--neon2);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .product-info-box .info-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+  .product-info-box b { color: var(--neon); font-weight: 600; }
 
   /* ── Security alerts ── */
   .security-panel {
@@ -590,7 +548,6 @@
   .alert-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
   .alert-desc b { color: var(--text); font-weight: 500; }
   .alert-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
-  .alert-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 
   .no-alerts {
     text-align: center;
@@ -598,19 +555,13 @@
     font-size: 12px;
     color: var(--green);
   }
-  .security-scanning {
-    text-align: center;
-    padding: 14px;
-    font-size: 12px;
-    color: var(--muted);
-  }
+
   @keyframes pulse-red {
     0%, 100% { opacity: 1; }
     50% { opacity: .4; }
   }
   .pulse { animation: pulse-red 1.4s infinite; }
 
-  /* ── Product badge in table ── */
   .prod-badge {
     display: inline-flex;
     align-items: center;
@@ -622,7 +573,55 @@
     font-size: 11px;
     color: var(--muted);
   }
+  /* Badge tsukasa-cfg mis en évidence */
+  .prod-badge.verified-prod {
+    background: rgba(124,58,237,.1);
+    border-color: rgba(124,58,237,.35);
+    color: var(--neon);
+  }
   .prod-badge .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  header .logo {
+    background: var(--neon2);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 5px;
+    letter-spacing: 1px;
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+  header h1 { font-size: 16px; font-weight: 500; color: var(--neon); }
+  header .sep { flex: 1; }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.88) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes logoPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+    50%       { box-shadow: 0 0 16px 4px rgba(124,58,237,.45); }
+  }
+  @keyframes countUp {
+    from { transform: translateY(8px); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
 </style>
 </head>
 <body>
@@ -651,7 +650,7 @@
 <div class="main">
 
   <!-- Stats -->
-  <div class="stats-row" id="stats-row">
+  <div class="stats-row">
     <div class="stat-card"><div class="val" id="s-total">—</div><div class="lbl">Total</div></div>
     <div class="stat-card green"><div class="val" id="s-active">—</div><div class="lbl">Actives</div></div>
     <div class="stat-card yellow"><div class="val" id="s-expired">—</div><div class="lbl">Expirées</div></div>
@@ -659,8 +658,18 @@
     <div class="stat-card"><div class="val" id="s-checks">—</div><div class="lbl">Vérif. 24h</div></div>
   </div>
 
+  <!-- Info box produit vérifié -->
+  <div class="product-info-box">
+    <span class="info-icon">🔒</span>
+    <div>
+      Le produit <b>tsukasa-cfg</b> est le seul produit autorisé par le client (patch C++).
+      Toute clé assignée à un autre produit — ou sans produit — sera <b>rejetée</b> par le vérificateur avec le message <b>"Wrong product"</b>.
+      Le produit tsukasa-cfg est <b>verrouillé</b> et ne peut pas être supprimé ni renommé.
+    </div>
+  </div>
+
   <!-- Security alerts -->
-  <div class="security-panel" id="security-panel">
+  <div class="security-panel">
     <div class="security-header" onclick="toggleSecurity()">
       <div class="security-header-left">
         <span class="security-title">🛡 Alertes de sécurité</span>
@@ -718,7 +727,7 @@
     </div>
     <div class="field">
       <label>Produit</label>
-      <select id="c-product" style="padding:8px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:13px;min-width:140px">
+      <select id="c-product" style="padding:8px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:13px;min-width:160px">
         <option value="">— Aucun —</option>
       </select>
     </div>
@@ -731,12 +740,7 @@
   </div>
 
   <!-- Product tabs -->
-  <div class="product-tabs" id="product-tabs">
-    <div class="product-tab active" data-product="" onclick="setProductFilter(this)">
-      <span>Tous les produits</span>
-      <span class="tab-count" id="tab-count-all">0</span>
-    </div>
-  </div>
+  <div class="product-tabs" id="product-tabs"></div>
 
   <!-- Toolbar -->
   <div class="toolbar">
@@ -755,6 +759,7 @@
         <tr>
           <th>Clé</th>
           <th>Produit</th>
+          <th>Vérifié</th>
           <th>Statut</th>
           <th>Expiration</th>
           <th>HWID</th>
@@ -764,7 +769,7 @@
         </tr>
       </thead>
       <tbody id="keys-body">
-        <tr><td colspan="8" class="empty-state">Chargement…</td></tr>
+        <tr><td colspan="9" class="empty-state">Chargement…</td></tr>
       </tbody>
     </table>
   </div>
@@ -805,6 +810,15 @@ let currentProduct = "";
 let extendTarget = null;
 const now = () => Math.floor(Date.now() / 1000);
 
+// ── Produit système verrouillé ─────────────────────────────────
+// Ce produit est celui vérifié par le client C++ — il ne peut pas être supprimé ni renommé.
+const LOCKED_PRODUCT = {
+  id: "tsukasa-cfg",
+  name: "tsukasa-cfg",
+  color: "#7c3aed",
+  locked: true
+};
+
 // ── Products (local storage) ───────────────────────────────────
 const PRODUCTS_KEY = "tsukasa_products";
 let products = [];
@@ -812,13 +826,12 @@ let products = [];
 function loadProducts() {
   try { products = JSON.parse(localStorage.getItem(PRODUCTS_KEY)) || []; }
   catch { products = []; }
-  if (products.length === 0) {
-    products = [
-      { id: "p1", name: "Produit A", color: "#9d5ff5" },
-      { id: "p2", name: "Produit B", color: "#34d399" },
-    ];
-    saveProducts();
-  }
+
+  // S'assurer que tsukasa-cfg est toujours présent et en premier
+  products = products.filter(p => p.id !== "tsukasa-cfg");
+  products.unshift({ ...LOCKED_PRODUCT });
+
+  saveProducts();
   renderProductManager();
   renderProductTabs();
   renderProductSelect();
@@ -832,6 +845,10 @@ function addProduct() {
   const name = document.getElementById("pm-name").value.trim();
   const color = document.getElementById("pm-color").value;
   if (!name) return;
+  if (name.toLowerCase() === "tsukasa-cfg") {
+    toast("Ce nom est réservé au produit système.", "err");
+    return;
+  }
   products.push({ id: "p" + Date.now(), name, color });
   saveProducts();
   document.getElementById("pm-name").value = "";
@@ -843,6 +860,7 @@ function addProduct() {
 }
 
 function recolorProduct(id, color) {
+  if (id === "tsukasa-cfg") return; // verrouillé
   const p = products.find(p => p.id === id);
   if (!p) return;
   p.color = color;
@@ -853,10 +871,18 @@ function recolorProduct(id, color) {
 }
 
 function renameProduct(id) {
+  if (id === "tsukasa-cfg") {
+    toast("tsukasa-cfg est verrouillé — il ne peut pas être renommé.", "err");
+    return;
+  }
   const p = products.find(p => p.id === id);
   if (!p) return;
   const newName = prompt("Nouveau nom du produit :", p.name);
   if (!newName || !newName.trim()) return;
+  if (newName.trim().toLowerCase() === "tsukasa-cfg") {
+    toast("Ce nom est réservé.", "err");
+    return;
+  }
   p.name = newName.trim();
   saveProducts();
   renderProductManager();
@@ -867,9 +893,12 @@ function renameProduct(id) {
 }
 
 function deleteProduct(id) {
+  if (id === "tsukasa-cfg") {
+    toast("tsukasa-cfg est verrouillé — il ne peut pas être supprimé.", "err");
+    return;
+  }
   if (!confirm("Supprimer ce produit ? Les clés associées perdront leur catégorie.")) return;
   products = products.filter(p => p.id !== id);
-  // Remove from keys
   allKeys.forEach(k => { if (k.product === id) k.product = ""; });
   saveProducts();
   saveKeysLocal();
@@ -887,17 +916,25 @@ function getProduct(id) {
 function renderProductManager() {
   const list = document.getElementById("pm-list");
   if (products.length === 0) {
-    list.innerHTML = '<span style="font-size:12px;color:var(--muted)">Aucun produit. Ajoutez-en un ci-dessous.</span>';
+    list.innerHTML = '<span style="font-size:12px;color:var(--muted)">Aucun produit.</span>';
     return;
   }
-  list.innerHTML = products.map(p => `
-    <div class="product-chip">
-      <div class="chip-dot" style="background:${p.color}"></div>
-      <span class="chip-name" onclick="renameProduct('${p.id}')" title="Cliquer pour renommer">${p.name}</span>
-      <input type="color" value="${p.color}" style="width:20px;height:20px;border:none;background:none;cursor:pointer;padding:0;border-radius:3px" onchange="recolorProduct('${p.id}', this.value)" title="Changer la couleur">
-      <span class="chip-del" onclick="deleteProduct('${p.id}')" title="Supprimer">×</span>
-    </div>
-  `).join("");
+  list.innerHTML = products.map(p => {
+    const isLocked = p.id === "tsukasa-cfg";
+    const delBtn = isLocked
+      ? `<span class="chip-del locked" title="Produit système verrouillé">🔒</span>`
+      : `<span class="chip-del" onclick="deleteProduct('${p.id}')" title="Supprimer">×</span>`;
+    const colorPicker = isLocked
+      ? `<span style="font-size:10px;color:var(--neon);opacity:.7">SYSTÈME</span>`
+      : `<input type="color" value="${p.color}" style="width:20px;height:20px;border:none;background:none;cursor:pointer;padding:0;border-radius:3px" onchange="recolorProduct('${p.id}', this.value)" title="Changer la couleur">`;
+    return `
+      <div class="product-chip" data-id="${p.id}">
+        <div class="chip-dot" style="background:${p.color}"></div>
+        <span class="chip-name" onclick="renameProduct('${p.id}')" title="${isLocked ? 'Produit système — renommage désactivé' : 'Cliquer pour renommer'}">${p.name}</span>
+        ${colorPicker}
+        ${delBtn}
+      </div>`;
+  }).join("");
 }
 
 function renderProductTabs() {
@@ -906,28 +943,35 @@ function renderProductTabs() {
   const counters = {};
   allKeys.forEach(k => { if (k.product) counters[k.product] = (counters[k.product] || 0) + 1; });
 
-  const tabs = products.map(p => `
-    <div class="product-tab${currentProduct === p.id ? " active" : ""}" data-product="${p.id}" onclick="setProductFilter(this)">
-      <div class="tab-dot" style="background:${p.color}"></div>
-      <span>${p.name}</span>
-      <span class="tab-count">${counters[p.id] || 0}</span>
-    </div>
-  `).join("");
+  const tabs = products.map(p => {
+    const isLocked = p.id === "tsukasa-cfg";
+    const verifiedIcon = isLocked ? `<span class="verified-icon">✓</span>` : "";
+    return `
+      <div class="product-tab${currentProduct === p.id ? " active" : ""}" data-product="${p.id}" onclick="setProductFilter(this)">
+        <div class="tab-dot" style="background:${p.color}"></div>
+        <span>${p.name}</span>
+        ${verifiedIcon}
+        <span class="tab-count">${counters[p.id] || 0}</span>
+      </div>`;
+  }).join("");
 
   wrap.innerHTML = `
     <div class="product-tab${currentProduct === "" ? " active" : ""}" data-product="" onclick="setProductFilter(this)">
       <span>Tous</span>
       <span class="tab-count">${allCount}</span>
     </div>
-    ${tabs}
-  `;
+    ${tabs}`;
 }
 
 function renderProductSelect() {
   const sel = document.getElementById("c-product");
   const val = sel.value;
-  sel.innerHTML = '<option value="">— Aucun —</option>' +
-    products.map(p => `<option value="${p.id}"${val===p.id?" selected":""}>${p.name}</option>`).join("");
+  sel.innerHTML = '<option value="">— Aucun (non vérifié) —</option>' +
+    products.map(p => {
+      const isLocked = p.id === "tsukasa-cfg";
+      const label = isLocked ? `${p.name} ✓ (requis par le client)` : p.name;
+      return `<option value="${p.id}"${val === p.id ? " selected" : ""}>${label}</option>`;
+    }).join("");
 }
 
 function setProductFilter(el) {
@@ -943,7 +987,7 @@ function toggleProductManager(el) {
 
 // ── Local key product store ────────────────────────────────────
 const KEYS_META_KEY = "tsukasa_keys_meta";
-let keysMeta = {}; // { key: { product } }
+let keysMeta = {};
 
 function loadKeysMeta() {
   try { keysMeta = JSON.parse(localStorage.getItem(KEYS_META_KEY)) || {}; }
@@ -958,7 +1002,7 @@ function applyMeta(keys) {
   return keys.map(k => ({ ...k, product: keysMeta[k.key]?.product || "" }));
 }
 
-// ── Login ─────────────────────────────────────────────────────
+// ── Login ──────────────────────────────────────────────────────
 function doLogin() {
   const v = document.getElementById("secret-input").value.trim();
   if (!v) return;
@@ -966,7 +1010,7 @@ function doLogin() {
   loadAll();
 }
 
-// ── Fetch helpers ─────────────────────────────────────────────
+// ── Fetch helpers ──────────────────────────────────────────────
 async function api(method, path, body) {
   const opts = {
     method,
@@ -982,7 +1026,7 @@ async function api(method, path, body) {
   return r.json();
 }
 
-// ── Load all data ─────────────────────────────────────────────
+// ── Load all data ──────────────────────────────────────────────
 async function loadAll() {
   const [keys, stats] = await Promise.all([
     api("GET", "/admin/keys"),
@@ -1009,8 +1053,8 @@ function animateCount(id, target) {
   const duration = 600;
   const startTime = performance.now();
   el.style.animation = "countUp .3s ease both";
-  function step(now) {
-    const p = Math.min((now - startTime) / duration, 1);
+  function step(t) {
+    const p = Math.min((t - startTime) / duration, 1);
     const ease = 1 - Math.pow(1 - p, 3);
     el.textContent = Math.round(start + (end - start) * ease);
     if (p < 1) requestAnimationFrame(step);
@@ -1021,7 +1065,7 @@ function animateCount(id, target) {
 
 function refresh() { loadAll(); }
 
-// ── Render table ──────────────────────────────────────────────
+// ── Render table ───────────────────────────────────────────────
 function setFilter(el) {
   document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
   el.classList.add("active");
@@ -1051,6 +1095,11 @@ function daysLeft(ts) {
   return ` <span style="color:var(--muted)">(${d}j)</span>`;
 }
 
+// Vérifie si une clé passera la vérification produit du client C++
+function isProductVerified(productId) {
+  return productId === "tsukasa-cfg";
+}
+
 function renderTable() {
   const q = document.getElementById("search").value.toLowerCase();
   let rows = allKeys.filter(r => {
@@ -1063,7 +1112,7 @@ function renderTable() {
 
   const tbody = document.getElementById("keys-body");
   if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Aucune clé trouvée.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Aucune clé trouvée.</td></tr>';
     return;
   }
 
@@ -1071,18 +1120,34 @@ function renderTable() {
     const status = getStatus(r);
     const badgeClass = `badge-${status}`;
     const badgeLabel = { active: "Actif", expired: "Expiré", revoked: "Révoqué", lifetime: "Lifetime" }[status];
-    const hwid = r.hwid ? `<span style="font-size:11px;color:var(--muted)">${r.hwid.slice(0,12)}…</span>` : `<span style="color:var(--border)">—</span>`;
-    const exp  = `${fmtDate(r.expires_at)}${status === "active" ? daysLeft(r.expires_at) : ""}`;
+    const hwid = r.hwid
+      ? `<span style="font-size:11px;color:var(--muted)">${r.hwid.slice(0,12)}…</span>`
+      : `<span style="color:var(--border)">—</span>`;
+    const exp = `${fmtDate(r.expires_at)}${status === "active" ? daysLeft(r.expires_at) : ""}`;
 
     const prod = getProduct(r.product);
+    const verified = isProductVerified(r.product);
+
+    // Colonne produit
     const prodCell = prod
-      ? `<div class="prod-badge"><div class="dot" style="background:${prod.color}"></div>${prod.name}</div>`
+      ? `<div class="prod-badge${verified ? " verified-prod" : ""}">
+           <div class="dot" style="background:${prod.color}"></div>${prod.name}
+         </div>`
       : `<span style="color:var(--border)">—</span>`;
 
-    const prodOptions = '<option value="">— Aucun —</option>' +
-      products.map(p => `<option value="${p.id}"${r.product===p.id?" selected":""}>${p.name}</option>`).join("");
+    // Colonne vérification produit C++
+    const verifiedCell = verified
+      ? `<span class="badge-verified">✓ OK</span>`
+      : `<span class="badge-unverified">✗ Rejeté</span>`;
 
-    const btnRevoke  = r.revoked
+    const prodOptions = '<option value="">— Aucun (non vérifié) —</option>' +
+      products.map(p => {
+        const isLocked = p.id === "tsukasa-cfg";
+        const label = isLocked ? `${p.name} ✓` : p.name;
+        return `<option value="${p.id}"${r.product === p.id ? " selected" : ""}>${label}</option>`;
+      }).join("");
+
+    const btnRevoke = r.revoked
       ? `<button class="btn btn-green btn-sm" onclick="restore('${r.key}')">Restaurer</button>`
       : `<button class="btn btn-red btn-sm" onclick="revoke('${r.key}')">Révoquer</button>`;
 
@@ -1090,10 +1155,13 @@ function renderTable() {
     return `<tr class="row-enter" style="animation-delay:${delay}ms">
       <td><span class="key-text" onclick="copyKey('${r.key}')" title="Cliquer pour copier">${r.key}</span></td>
       <td>
-        <select class="prod-select" style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;padding:3px 6px;transition:border-color .2s" onchange="setKeyProduct('${r.key}', this.value)">
+        <select class="prod-select"
+          style="background:var(--bg3);border:1px solid ${verified ? 'rgba(124,58,237,.4)' : 'var(--border)'};border-radius:4px;color:var(--text);font-size:12px;padding:3px 6px;transition:border-color .2s"
+          onchange="setKeyProduct('${r.key}', this.value)">
           ${prodOptions}
         </select>
       </td>
+      <td>${verifiedCell}</td>
       <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
       <td>${exp}</td>
       <td>${hwid}</td>
@@ -1112,7 +1180,7 @@ function renderTable() {
   }).join("");
 }
 
-// ── Assign product to key (local) ────────────────────────────
+// ── Assign product to key (local) ─────────────────────────────
 function setKeyProduct(key, productId) {
   if (!keysMeta[key]) keysMeta[key] = {};
   keysMeta[key].product = productId;
@@ -1120,17 +1188,33 @@ function setKeyProduct(key, productId) {
   const k = allKeys.find(k => k.key === key);
   if (k) k.product = productId;
   renderProductTabs();
+  renderTable();
+
+  // Avertissement si on assigne à un produit autre que tsukasa-cfg
+  if (productId && productId !== "tsukasa-cfg") {
+    toast("⚠ Cette clé sera rejetée par le client (produit ≠ tsukasa-cfg)", "err");
+  } else if (productId === "tsukasa-cfg") {
+    toast("✓ Clé assignée à tsukasa-cfg — autorisée par le client", "ok");
+  }
 }
 
-// ── Actions ───────────────────────────────────────────────────
+// ── Actions ────────────────────────────────────────────────────
 async function createKeys() {
   const count   = parseInt(document.getElementById("c-count").value);
   const days    = parseInt(document.getElementById("c-days").value);
   const note    = document.getElementById("c-note").value;
   const product = document.getElementById("c-product").value;
-  const res     = await api("POST", "/admin/create", { count, days, note });
+
+  // Avertissement si aucun produit ou produit non-tsukasa-cfg
+  if (!product) {
+    if (!confirm("Aucun produit sélectionné. Ces clés seront rejetées par le client C++.\nContinuer quand même ?")) return;
+  } else if (product !== "tsukasa-cfg") {
+    if (!confirm(`Le produit sélectionné n'est pas "tsukasa-cfg".\nCes clés seront rejetées par le client C++.\nContinuer quand même ?`)) return;
+  }
+
+  const res = await api("POST", "/admin/create", { count, days, note });
   if (!res) return;
-  // Assign product to newly created keys
+
   if (product) {
     res.created.forEach(key => {
       if (!keysMeta[key]) keysMeta[key] = {};
@@ -1138,9 +1222,12 @@ async function createKeys() {
     });
     saveKeysLocal();
   }
+
   document.getElementById("new-keys").innerHTML =
     `<b style="color:var(--green)">✓ Créé :</b><br>` + res.created.join("<br>");
-  toast("✓ " + res.created.length + " clé(s) créée(s)", "ok");
+
+  const productName = product ? getProduct(product)?.name || product : "Aucun";
+  toast(`✓ ${res.created.length} clé(s) créée(s) → ${productName}`, "ok");
   await loadAll();
 }
 
@@ -1213,7 +1300,7 @@ function copyKey(key) {
   navigator.clipboard.writeText(key).then(() => toast("Clé copiée !", "ok"));
 }
 
-// ── Toast ─────────────────────────────────────────────────────
+// ── Toast ──────────────────────────────────────────────────────
 let toastTimer;
 function toast(msg, type = "ok") {
   const el = document.getElementById("toast");
@@ -1223,7 +1310,7 @@ function toast(msg, type = "ok") {
   toastTimer = setTimeout(() => el.className = "", 2500);
 }
 
-// ── Security scanning ─────────────────────────────────────────
+// ── Security scanning ──────────────────────────────────────────
 let securityOpen = false;
 
 function toggleSecurity() {
@@ -1236,13 +1323,11 @@ async function scanSecurity() {
   btn.textContent = "Scan…";
   btn.disabled = true;
 
-  // Fetch logs for all keys in parallel (max 80 to avoid flood)
   const keysToScan = allKeys.slice(0, 80);
   const results = await Promise.allSettled(
     keysToScan.map(k => api("GET", `/admin/log/${k.key}`))
   );
 
-  // Flatten all log entries with their key
   const allLogs = [];
   results.forEach((r, i) => {
     if (r.status === "fulfilled" && Array.isArray(r.value)) {
@@ -1269,7 +1354,6 @@ function analyzeSecurityLogs(logs) {
   const oneDayAgo = Math.floor(Date.now() / 1000) - 86400;
   const oneHourAgo = Math.floor(Date.now() / 1000) - 3600;
 
-  // Group by IP
   const byIp = {};
   logs.forEach(e => {
     if (!e.ip) return;
@@ -1277,7 +1361,7 @@ function analyzeSecurityLogs(logs) {
     byIp[e.ip].push(e);
   });
 
-  // ① Brute-force: IP avec beaucoup d'échecs (INVALID_KEY) en 24h
+  // Brute-force
   Object.entries(byIp).forEach(([ip, entries]) => {
     const recentFails = entries.filter(e =>
       e.checked_at > oneDayAgo && e.result === "INVALID_KEY"
@@ -1293,13 +1377,12 @@ function analyzeSecurityLogs(logs) {
           : `Tentatives suspectes — IP ${ip}`,
         desc: `<b>${recentFails.length} clés invalides</b> testées en 24h${recentHour > 0 ? `, dont <b>${recentHour} dans la dernière heure</b>` : ""}. ${keys.length} clé(s) ciblée(s).`,
         meta: `IP : ${ip} · Dernière tentative : ${fmtTs(recentFails[recentFails.length-1].checked_at)}`,
-        ip,
-        count: recentFails.length
+        ip, count: recentFails.length
       });
     }
   });
 
-  // ② HWID_MISMATCH en série : quelqu'un partage sa licence
+  // HWID_MISMATCH
   const hwMismatch = logs.filter(e => e.result === "HWID_MISMATCH" && e.checked_at > oneDayAgo);
   const byKey = {};
   hwMismatch.forEach(e => {
@@ -1315,13 +1398,27 @@ function analyzeSecurityLogs(logs) {
         title: `Partage de licence suspect — ${key.slice(0,16)}…`,
         desc: `<b>${entries.length} connexions refusées</b> (HWID différent) en 24h depuis <b>${ips.length} IP(s)</b> distincte(s). La clé est peut-être partagée ou revendue.`,
         meta: `Clé : ${key} · IPs : ${ips.slice(0,4).join(", ")}${ips.length > 4 ? "…" : ""}`,
-        key,
-        count: entries.length
+        key, count: entries.length
       });
     }
   });
 
-  // ③ Flot de vérifs : une clé vérifiée à très haute fréquence (bot/script)
+  // WRONG_PRODUCT — tentatives avec mauvais produit
+  const wrongProduct = logs.filter(e => e.result === "WRONG_PRODUCT" && e.checked_at > oneDayAgo);
+  if (wrongProduct.length > 0) {
+    const ips = [...new Set(wrongProduct.map(e => e.ip).filter(Boolean))];
+    const keys = [...new Set(wrongProduct.map(e => e._key))];
+    alerts.push({
+      level: wrongProduct.length >= 10 ? "danger" : "warn",
+      icon: "🚫",
+      title: `Tentatives avec mauvais produit — ${wrongProduct.length} en 24h`,
+      desc: `<b>${wrongProduct.length} vérifications refusées</b> (WRONG_PRODUCT) en 24h sur <b>${keys.length} clé(s)</b> depuis <b>${ips.length} IP(s)</b>. Probablement des clés d'un autre produit utilisées sur tsukasa-cfg.`,
+      meta: `IPs : ${ips.slice(0,4).join(", ")}${ips.length > 4 ? "…" : ""}`,
+      count: wrongProduct.length
+    });
+  }
+
+  // Flot de vérifs
   const byKeyAll = {};
   logs.filter(e => e.checked_at > oneHourAgo).forEach(e => {
     if (!byKeyAll[e._key]) byKeyAll[e._key] = [];
@@ -1335,13 +1432,12 @@ function analyzeSecurityLogs(logs) {
         title: `Vérifications massives — ${key.slice(0,16)}…`,
         desc: `<b>${entries.length} vérifications</b> en 1h sur la même clé. Probablement un script ou bot automatisé.`,
         meta: `Clé : ${key} · Résultats : ${[...new Set(entries.map(e => e.result))].join(", ")}`,
-        key,
-        count: entries.length
+        key, count: entries.length
       });
     }
   });
 
-  // ④ IP qui scanne plusieurs clés différentes (enumération)
+  // Énumération IP
   Object.entries(byIp).forEach(([ip, entries]) => {
     const recent = entries.filter(e => e.checked_at > oneDayAgo);
     const uniqueKeys = [...new Set(recent.map(e => e._key))];
@@ -1354,14 +1450,25 @@ function analyzeSecurityLogs(logs) {
           title: `Énumération de clés — IP ${ip}`,
           desc: `Cette IP a vérifié <b>${uniqueKeys.length} clés différentes</b> en 24h. Comportement typique d'un scanner automatique.`,
           meta: `IP : ${ip} · Total requêtes : ${recent.length}`,
-          ip,
-          count: uniqueKeys.length
+          ip, count: uniqueKeys.length
         });
       }
     }
   });
 
-  // Trier : danger > warn > info, puis par count décroissant
+  // Clés sans produit tsukasa-cfg utilisées quand même (WRONG_PRODUCT en log)
+  const keysWithoutCfg = allKeys.filter(k => k.product !== "tsukasa-cfg");
+  if (keysWithoutCfg.length > 0) {
+    alerts.push({
+      level: "info",
+      icon: "⚠️",
+      title: `${keysWithoutCfg.length} clé(s) sans produit tsukasa-cfg`,
+      desc: `Ces clés seront automatiquement <b>rejetées</b> par le client C++ avec "Wrong product". Assignez-les au produit tsukasa-cfg si elles doivent être utilisables.`,
+      meta: `Clés concernées : ${keysWithoutCfg.slice(0,3).map(k=>k.key.slice(0,12)+"…").join(", ")}${keysWithoutCfg.length>3?"…":""}`,
+      count: keysWithoutCfg.length
+    });
+  }
+
   const order = { danger: 0, warn: 1, info: 2 };
   alerts.sort((a, b) => order[a.level] - order[b.level] || b.count - a.count);
   return alerts;
@@ -1400,7 +1507,7 @@ function renderAlerts(alerts) {
   `).join("") + "</div>";
 }
 
-// ── Init ──────────────────────────────────────────────────────
+// ── Init ───────────────────────────────────────────────────────
 loadProducts();
 
 // ── Galaxy background ──────────────────────────────────────────
@@ -1408,27 +1515,24 @@ loadProducts();
   const canvas = document.getElementById("galaxy-canvas");
   const ctx = canvas.getContext("2d");
   let W, H, stars = [], nebulae = [], particles = [];
-  const NUM_STARS = 320;
-  const NUM_NEBULA = 6;
-  const NUM_PARTICLES = 55;
+  const NUM_STARS = 320, NUM_NEBULA = 6, NUM_PARTICLES = 55;
 
   function resize() {
     W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
   }
-
   function rand(a, b) { return a + Math.random() * (b - a); }
 
   function initStars() {
     stars = [];
     for (let i = 0; i < NUM_STARS; i++) {
       stars.push({
-        x: rand(0, W), y: rand(0, H),
-        r: rand(0.3, 1.8),
-        alpha: rand(0.3, 1),
-        twinkleSpeed: rand(0.003, 0.012),
-        twinkleOffset: rand(0, Math.PI * 2),
-        color: Math.random() > 0.85 ? "#c4aaff" : Math.random() > 0.7 ? "#e8d5ff" : "#ffffff"
+        x: rand(0,W), y: rand(0,H),
+        r: rand(0.3,1.8),
+        alpha: rand(0.3,1),
+        twinkleSpeed: rand(0.003,0.012),
+        twinkleOffset: rand(0,Math.PI*2),
+        color: Math.random()>.85?"#c4aaff":Math.random()>.7?"#e8d5ff":"#ffffff"
       });
     }
   }
@@ -1436,22 +1540,17 @@ loadProducts();
   function initNebulae() {
     nebulae = [];
     const palette = [
-      ["#6d28d9","#8b5cf6"],
-      ["#7c3aed","#4c1d95"],
-      ["#5b21b6","#9d5ff5"],
-      ["#4338ca","#6d28d9"],
-      ["#1e1b4b","#7c3aed"],
-      ["#312e81","#8b5cf6"],
+      ["#6d28d9","#8b5cf6"],["#7c3aed","#4c1d95"],["#5b21b6","#9d5ff5"],
+      ["#4338ca","#6d28d9"],["#1e1b4b","#7c3aed"],["#312e81","#8b5cf6"],
     ];
     for (let i = 0; i < NUM_NEBULA; i++) {
-      const [c1, c2] = palette[i % palette.length];
+      const [c1,c2] = palette[i%palette.length];
       nebulae.push({
-        x: rand(0, W), y: rand(0, H),
-        rx: rand(180, 420), ry: rand(100, 280),
-        angle: rand(0, Math.PI),
-        alpha: rand(0.04, 0.13),
-        c1, c2,
-        drift: rand(-0.06, 0.06)
+        x:rand(0,W),y:rand(0,H),
+        rx:rand(180,420),ry:rand(100,280),
+        angle:rand(0,Math.PI),
+        alpha:rand(0.04,0.13),
+        c1,c2,drift:rand(-0.06,0.06)
       });
     }
   }
@@ -1460,90 +1559,55 @@ loadProducts();
     particles = [];
     for (let i = 0; i < NUM_PARTICLES; i++) {
       particles.push({
-        x: rand(0, W), y: rand(0, H),
-        vx: rand(-0.12, 0.12), vy: rand(-0.08, 0.08),
-        r: rand(0.5, 2.2),
-        alpha: rand(0.15, 0.6),
-        color: ["#9d5ff5","#7c3aed","#c4aaff","#ffffff"][Math.floor(Math.random()*4)]
+        x:rand(0,W),y:rand(0,H),
+        vx:rand(-0.12,0.12),vy:rand(-0.08,0.08),
+        r:rand(0.5,2.2),alpha:rand(0.15,0.6),
+        color:["#9d5ff5","#7c3aed","#c4aaff","#ffffff"][Math.floor(Math.random()*4)]
       });
     }
   }
 
   let t = 0;
   function draw() {
-    ctx.clearRect(0, 0, W, H);
+    ctx.clearRect(0,0,W,H);
+    const bg = ctx.createRadialGradient(W*.5,H*.4,0,W*.5,H*.5,Math.max(W,H)*.8);
+    bg.addColorStop(0,"#0f0a1a");bg.addColorStop(0.4,"#0d0d18");bg.addColorStop(1,"#070710");
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
 
-    // Deep space bg gradient
-    const bg = ctx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.5, Math.max(W, H)*0.8);
-    bg.addColorStop(0, "#0f0a1a");
-    bg.addColorStop(0.4, "#0d0d18");
-    bg.addColorStop(1, "#070710");
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-
-    // Nebulae
-    nebulae.forEach(n => {
-      ctx.save();
-      ctx.translate(n.x, n.y);
-      ctx.rotate(n.angle + t * n.drift * 0.001);
-      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, n.rx);
-      grad.addColorStop(0, n.c1 + "55");
-      grad.addColorStop(0.4, n.c2 + "22");
-      grad.addColorStop(1, "transparent");
-      ctx.globalAlpha = n.alpha + Math.sin(t * 0.003 + n.angle) * 0.02;
-      ctx.scale(1, n.ry / n.rx);
-      ctx.beginPath();
-      ctx.arc(0, 0, n.rx, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-      ctx.restore();
+    nebulae.forEach(n=>{
+      ctx.save();ctx.translate(n.x,n.y);ctx.rotate(n.angle+t*n.drift*0.001);
+      const grad=ctx.createRadialGradient(0,0,0,0,0,n.rx);
+      grad.addColorStop(0,n.c1+"55");grad.addColorStop(0.4,n.c2+"22");grad.addColorStop(1,"transparent");
+      ctx.globalAlpha=n.alpha+Math.sin(t*0.003+n.angle)*0.02;
+      ctx.scale(1,n.ry/n.rx);ctx.beginPath();ctx.arc(0,0,n.rx,0,Math.PI*2);
+      ctx.fillStyle=grad;ctx.fill();ctx.restore();
     });
 
-    // Stars
-    ctx.globalAlpha = 1;
-    stars.forEach(s => {
-      const a = s.alpha * (0.6 + 0.4 * Math.sin(t * s.twinkleSpeed + s.twinkleOffset));
-      ctx.globalAlpha = a;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = s.color;
-      ctx.fill();
+    ctx.globalAlpha=1;
+    stars.forEach(s=>{
+      const a=s.alpha*(0.6+0.4*Math.sin(t*s.twinkleSpeed+s.twinkleOffset));
+      ctx.globalAlpha=a;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=s.color;ctx.fill();
     });
 
-    // Floating particles
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0) p.x = W;
-      if (p.x > W) p.x = 0;
-      if (p.y < 0) p.y = H;
-      if (p.y > H) p.y = 0;
-      ctx.globalAlpha = p.alpha * (0.5 + 0.5 * Math.sin(t * 0.02 + p.x));
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.fill();
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      ctx.globalAlpha=p.alpha*(0.5+0.5*Math.sin(t*0.02+p.x));
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();
     });
 
-    // Central glow (violet core)
-    ctx.globalAlpha = 1;
-    const core = ctx.createRadialGradient(W*0.5, H*0.3, 0, W*0.5, H*0.3, W*0.45);
-    core.addColorStop(0, "rgba(124,58,237,0.06)");
-    core.addColorStop(0.5, "rgba(109,40,217,0.03)");
-    core.addColorStop(1, "transparent");
-    ctx.fillStyle = core;
-    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha=1;
+    const core=ctx.createRadialGradient(W*.5,H*.3,0,W*.5,H*.3,W*.45);
+    core.addColorStop(0,"rgba(124,58,237,0.06)");core.addColorStop(0.5,"rgba(109,40,217,0.03)");core.addColorStop(1,"transparent");
+    ctx.fillStyle=core;ctx.fillRect(0,0,W,H);
 
     t++;
     requestAnimationFrame(draw);
   }
 
-  window.addEventListener("resize", () => { resize(); initStars(); initNebulae(); initParticles(); });
-  resize();
-  initStars();
-  initNebulae();
-  initParticles();
-  draw();
+  window.addEventListener("resize",()=>{resize();initStars();initNebulae();initParticles();});
+  resize();initStars();initNebulae();initParticles();draw();
 })();
 </script>
 </body>
