@@ -270,6 +270,128 @@
     color: var(--muted);
     font-size: 13px;
   }
+
+  /* ── Product tabs ── */
+  .product-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .product-tab {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .product-tab:hover { border-color: var(--neon2); color: var(--text); }
+  .product-tab.active { border-color: var(--neon); color: var(--neon); background: rgba(157,95,245,.12); }
+  .product-tab .tab-count {
+    background: rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 11px;
+  }
+  .product-tab.active .tab-count { background: rgba(157,95,245,.25); }
+  .product-tab .tab-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── Product manager ── */
+  .product-manager {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .product-manager-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .product-manager-header span { font-size: 12px; color: var(--muted); }
+  .product-manager-header .arrow { transition: transform .2s; font-size: 11px; color: var(--muted); }
+  .product-manager-header.open .arrow { transform: rotate(90deg); }
+  .product-manager-body { display: none; margin-top: 14px; }
+  .product-manager-body.visible { display: block; }
+
+  .product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .product-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  .product-chip .chip-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .product-chip .chip-del {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    margin-left: 2px;
+  }
+  .product-chip .chip-del:hover { color: var(--red); }
+  .add-product-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .color-picker-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  input[type="color"] {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    cursor: pointer;
+    padding: 2px;
+  }
+
+  /* ── Product badge in table ── */
+  .prod-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .prod-badge .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -304,6 +426,26 @@
     <div class="stat-card"><div class="val" id="s-checks">—</div><div class="lbl">Vérif. 24h</div></div>
   </div>
 
+  <!-- Product Manager -->
+  <div class="product-manager">
+    <div class="product-manager-header" onclick="toggleProductManager(this)">
+      <span class="logo" style="font-size:10px;padding:3px 8px">PRODUITS</span>
+      <span>Gérer les catégories de produits</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="product-manager-body" id="pm-body">
+      <div class="product-list" id="pm-list"></div>
+      <div class="add-product-row">
+        <input type="text" id="pm-name" placeholder="Nom du produit…" style="width:180px">
+        <div class="color-picker-wrap">
+          <label style="font-size:11px;color:var(--muted)">Couleur</label>
+          <input type="color" id="pm-color" value="#9d5ff5">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="addProduct()">+ Ajouter</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Create -->
   <div class="create-panel">
     <div class="field">
@@ -324,11 +466,25 @@
       </select>
     </div>
     <div class="field">
+      <label>Produit</label>
+      <select id="c-product" style="padding:8px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:13px;min-width:140px">
+        <option value="">— Aucun —</option>
+      </select>
+    </div>
+    <div class="field">
       <label>Note (client, commande…)</label>
       <input type="text" id="c-note" placeholder="ex: Discord user#1234">
     </div>
     <button class="btn btn-primary" onclick="createKeys()">+ Créer</button>
     <div id="new-keys" style="font-family:monospace;font-size:12px;color:var(--neon);padding:6px 0;word-break:break-all;max-width:400px"></div>
+  </div>
+
+  <!-- Product tabs -->
+  <div class="product-tabs" id="product-tabs">
+    <div class="product-tab active" data-product="" onclick="setProductFilter(this)">
+      <span>Tous les produits</span>
+      <span class="tab-count" id="tab-count-all">0</span>
+    </div>
   </div>
 
   <!-- Toolbar -->
@@ -347,6 +503,7 @@
       <thead>
         <tr>
           <th>Clé</th>
+          <th>Produit</th>
           <th>Statut</th>
           <th>Expiration</th>
           <th>HWID</th>
@@ -356,7 +513,7 @@
         </tr>
       </thead>
       <tbody id="keys-body">
-        <tr><td colspan="7" class="empty-state">Chargement…</td></tr>
+        <tr><td colspan="8" class="empty-state">Chargement…</td></tr>
       </tbody>
     </table>
   </div>
@@ -393,8 +550,137 @@
 let SECRET = "";
 let allKeys = [];
 let currentFilter = "all";
+let currentProduct = "";
 let extendTarget = null;
 const now = () => Math.floor(Date.now() / 1000);
+
+// ── Products (local storage) ───────────────────────────────────
+const PRODUCTS_KEY = "tsukasa_products";
+let products = [];
+
+function loadProducts() {
+  try { products = JSON.parse(localStorage.getItem(PRODUCTS_KEY)) || []; }
+  catch { products = []; }
+  if (products.length === 0) {
+    products = [
+      { id: "p1", name: "Produit A", color: "#9d5ff5" },
+      { id: "p2", name: "Produit B", color: "#34d399" },
+    ];
+    saveProducts();
+  }
+  renderProductManager();
+  renderProductTabs();
+  renderProductSelect();
+}
+
+function saveProducts() {
+  localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+}
+
+function addProduct() {
+  const name = document.getElementById("pm-name").value.trim();
+  const color = document.getElementById("pm-color").value;
+  if (!name) return;
+  products.push({ id: "p" + Date.now(), name, color });
+  saveProducts();
+  document.getElementById("pm-name").value = "";
+  renderProductManager();
+  renderProductTabs();
+  renderProductSelect();
+  renderTable();
+  toast("Produit ajouté", "ok");
+}
+
+function deleteProduct(id) {
+  if (!confirm("Supprimer ce produit ? Les clés associées perdront leur catégorie.")) return;
+  products = products.filter(p => p.id !== id);
+  // Remove from keys
+  allKeys.forEach(k => { if (k.product === id) k.product = ""; });
+  saveProducts();
+  saveKeysLocal();
+  if (currentProduct === id) currentProduct = "";
+  renderProductManager();
+  renderProductTabs();
+  renderProductSelect();
+  renderTable();
+}
+
+function getProduct(id) {
+  return products.find(p => p.id === id);
+}
+
+function renderProductManager() {
+  const list = document.getElementById("pm-list");
+  if (products.length === 0) {
+    list.innerHTML = '<span style="font-size:12px;color:var(--muted)">Aucun produit. Ajoutez-en un ci-dessous.</span>';
+    return;
+  }
+  list.innerHTML = products.map(p => `
+    <div class="product-chip">
+      <div class="chip-dot" style="background:${p.color}"></div>
+      <span>${p.name}</span>
+      <span class="chip-del" onclick="deleteProduct('${p.id}')" title="Supprimer">×</span>
+    </div>
+  `).join("");
+}
+
+function renderProductTabs() {
+  const wrap = document.getElementById("product-tabs");
+  const allCount = allKeys.length;
+  const counters = {};
+  allKeys.forEach(k => { if (k.product) counters[k.product] = (counters[k.product] || 0) + 1; });
+
+  const tabs = products.map(p => `
+    <div class="product-tab${currentProduct === p.id ? " active" : ""}" data-product="${p.id}" onclick="setProductFilter(this)">
+      <div class="tab-dot" style="background:${p.color}"></div>
+      <span>${p.name}</span>
+      <span class="tab-count">${counters[p.id] || 0}</span>
+    </div>
+  `).join("");
+
+  wrap.innerHTML = `
+    <div class="product-tab${currentProduct === "" ? " active" : ""}" data-product="" onclick="setProductFilter(this)">
+      <span>Tous</span>
+      <span class="tab-count">${allCount}</span>
+    </div>
+    ${tabs}
+  `;
+}
+
+function renderProductSelect() {
+  const sel = document.getElementById("c-product");
+  const val = sel.value;
+  sel.innerHTML = '<option value="">— Aucun —</option>' +
+    products.map(p => `<option value="${p.id}"${val===p.id?" selected":""}>${p.name}</option>`).join("");
+}
+
+function setProductFilter(el) {
+  currentProduct = el.dataset.product;
+  renderProductTabs();
+  renderTable();
+}
+
+function toggleProductManager(el) {
+  el.classList.toggle("open");
+  document.getElementById("pm-body").classList.toggle("visible");
+}
+
+// ── Local key product store ────────────────────────────────────
+const KEYS_META_KEY = "tsukasa_keys_meta";
+let keysMeta = {}; // { key: { product } }
+
+function loadKeysMeta() {
+  try { keysMeta = JSON.parse(localStorage.getItem(KEYS_META_KEY)) || {}; }
+  catch { keysMeta = {}; }
+}
+
+function saveKeysLocal() {
+  localStorage.setItem(KEYS_META_KEY, JSON.stringify(keysMeta));
+}
+
+function applyMeta(keys) {
+  return keys.map(k => ({ ...k, product: keysMeta[k.key]?.product || "" }));
+}
 
 // ── Login ─────────────────────────────────────────────────────
 function doLogin() {
@@ -428,12 +714,14 @@ async function loadAll() {
   ]);
   if (!keys) return;
   document.getElementById("login-screen").style.display = "none";
-  allKeys = keys;
+  loadKeysMeta();
+  allKeys = applyMeta(keys);
   document.getElementById("s-total").textContent   = stats.total;
   document.getElementById("s-active").textContent  = stats.active;
   document.getElementById("s-expired").textContent = stats.expired;
   document.getElementById("s-revoked").textContent = stats.revoked;
   document.getElementById("s-checks").textContent  = stats.checksToday;
+  renderProductTabs();
   renderTable();
 }
 
@@ -474,13 +762,14 @@ function renderTable() {
   let rows = allKeys.filter(r => {
     const status = getStatus(r);
     if (currentFilter !== "all" && status !== currentFilter) return false;
-    if (q) return (r.key + r.note + (r.hwid||"")).toLowerCase().includes(q);
+    if (currentProduct !== "" && r.product !== currentProduct) return false;
+    if (q) return (r.key + r.note + (r.hwid||"") + (r.product||"")).toLowerCase().includes(q);
     return true;
   });
 
   const tbody = document.getElementById("keys-body");
   if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Aucune clé trouvée.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Aucune clé trouvée.</td></tr>';
     return;
   }
 
@@ -491,12 +780,25 @@ function renderTable() {
     const hwid = r.hwid ? `<span style="font-size:11px;color:var(--muted)">${r.hwid.slice(0,12)}…</span>` : `<span style="color:var(--border)">—</span>`;
     const exp  = `${fmtDate(r.expires_at)}${status === "active" ? daysLeft(r.expires_at) : ""}`;
 
+    const prod = getProduct(r.product);
+    const prodCell = prod
+      ? `<div class="prod-badge"><div class="dot" style="background:${prod.color}"></div>${prod.name}</div>`
+      : `<span style="color:var(--border)">—</span>`;
+
+    const prodOptions = '<option value="">— Aucun —</option>' +
+      products.map(p => `<option value="${p.id}"${r.product===p.id?" selected":""}>${p.name}</option>`).join("");
+
     const btnRevoke  = r.revoked
       ? `<button class="btn btn-green btn-sm" onclick="restore('${r.key}')">Restaurer</button>`
       : `<button class="btn btn-red btn-sm" onclick="revoke('${r.key}')">Révoquer</button>`;
 
     return `<tr>
       <td><span class="key-text" onclick="copyKey('${r.key}')" title="Cliquer pour copier">${r.key}</span></td>
+      <td>
+        <select class="prod-select" style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;padding:3px 6px" onchange="setKeyProduct('${r.key}', this.value)">
+          ${prodOptions}
+        </select>
+      </td>
       <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
       <td>${exp}</td>
       <td>${hwid}</td>
@@ -515,13 +817,32 @@ function renderTable() {
   }).join("");
 }
 
+// ── Assign product to key (local) ────────────────────────────
+function setKeyProduct(key, productId) {
+  if (!keysMeta[key]) keysMeta[key] = {};
+  keysMeta[key].product = productId;
+  saveKeysLocal();
+  const k = allKeys.find(k => k.key === key);
+  if (k) k.product = productId;
+  renderProductTabs();
+}
+
 // ── Actions ───────────────────────────────────────────────────
 async function createKeys() {
-  const count = parseInt(document.getElementById("c-count").value);
-  const days  = parseInt(document.getElementById("c-days").value);
-  const note  = document.getElementById("c-note").value;
-  const res   = await api("POST", "/admin/create", { count, days, note });
+  const count   = parseInt(document.getElementById("c-count").value);
+  const days    = parseInt(document.getElementById("c-days").value);
+  const note    = document.getElementById("c-note").value;
+  const product = document.getElementById("c-product").value;
+  const res     = await api("POST", "/admin/create", { count, days, note });
   if (!res) return;
+  // Assign product to newly created keys
+  if (product) {
+    res.created.forEach(key => {
+      if (!keysMeta[key]) keysMeta[key] = {};
+      keysMeta[key].product = product;
+    });
+    saveKeysLocal();
+  }
   document.getElementById("new-keys").innerHTML =
     `<b style="color:var(--green)">✓ Créé :</b><br>` + res.created.join("<br>");
   toast("✓ " + res.created.length + " clé(s) créée(s)", "ok");
@@ -606,6 +927,9 @@ function toast(msg, type = "ok") {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.className = "", 2500);
 }
+
+// ── Init ──────────────────────────────────────────────────────
+loadProducts();
 </script>
 </body>
 </html>
