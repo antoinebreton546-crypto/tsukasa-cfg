@@ -3,1019 +3,1038 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tsukasa — Admin Licences</title>
+<title>Tsukasa — OPS CENTER</title>
 <style>
-  :root {
-    --bg:      #0d0d12;
-    --bg2:     #16161f;
-    --bg3:     #1e1e2a;
-    --neon:    #9d5ff5;
-    --neon2:   #7c3aed;
-    --green:   #34d399;
-    --yellow:  #fbbf24;
-    --red:     #f87171;
-    --text:    #e4e4f0;
-    --muted:   #6b6b80;
-    --border:  #2a2a3a;
-    --radius:  8px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
-    font-size: 14px;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  #galaxy-canvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
-  header, .main, #login-screen, #log-modal, #extend-modal, #toast {
-    position: relative;
-    z-index: 1;
-  }
-  header {
-    background: rgba(22,22,31,0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  .create-panel, .table-wrap, .product-manager, .stat-card, .login-box, .modal-box {
-    background: rgba(22,22,31,0.75) !important;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 14px 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  #login-screen {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 100;
-  }
-  .login-box {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 36px 40px;
-    width: 360px;
-    text-align: center;
-  }
-  .login-box h2 { color: var(--neon); margin-bottom: 8px; }
-  .login-box p  { color: var(--muted); margin-bottom: 24px; font-size: 13px; }
-
-  .main { padding: 24px 28px; max-width: 1200px; margin: 0 auto; }
-
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-  .stat-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    text-align: center;
-    transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .3s, box-shadow .3s;
-    animation: fadeSlideUp .4s ease both;
-  }
-  .stat-card:nth-child(1) { animation-delay: .05s; }
-  .stat-card:nth-child(2) { animation-delay: .1s; }
-  .stat-card:nth-child(3) { animation-delay: .15s; }
-  .stat-card:nth-child(4) { animation-delay: .2s; }
-  .stat-card:nth-child(5) { animation-delay: .25s; }
-  .stat-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--neon2); box-shadow: 0 8px 28px rgba(124,58,237,.18); }
-  .stat-card .val {
-    font-size: 28px;
-    font-weight: 600;
-    color: var(--neon);
-    line-height: 1;
-    margin-bottom: 4px;
-    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-  }
-  .stat-card:hover .val { transform: scale(1.08); }
-  .stat-card .lbl { color: var(--muted); font-size: 12px; }
-  .stat-card.green .val { color: var(--green); }
-  .stat-card.yellow .val { color: var(--yellow); }
-  .stat-card.red .val   { color: var(--red); }
-
-  .create-panel {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 24px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-  }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
-  input, select {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    padding: 8px 10px;
-    font-size: 13px;
-    outline: none;
-    font-family: inherit;
-    transition: border-color .15s;
-  }
-  input:focus, select:focus { border-color: var(--neon2); box-shadow: 0 0 0 3px rgba(124,58,237,.15); }
-  input[type="text"] { width: 220px; }
-  input[type="number"] { width: 80px; }
-
-  .btn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    font-size: 13px;
-    font-family: inherit;
-    cursor: pointer;
-    transition: transform .18s cubic-bezier(.34,1.56,.64,1), opacity .15s, box-shadow .2s;
-    white-space: nowrap;
-    position: relative;
-    overflow: hidden;
-  }
-  .btn::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(255,255,255,0);
-    transition: background .2s;
-    border-radius: inherit;
-    pointer-events: none;
-  }
-  .btn:hover { transform: translateY(-2px) scale(1.04); }
-  .btn:hover::after { background: rgba(255,255,255,.07); }
-  .btn:active { transform: scale(.95) translateY(0); transition-duration: .07s; }
-  .btn-primary  { background: var(--neon2); color: #fff; }
-  .btn-primary:hover { box-shadow: 0 6px 22px rgba(124,58,237,.5); }
-  .btn-green    { background: #065f46; color: var(--green); border: 1px solid var(--green); }
-  .btn-green:hover { box-shadow: 0 4px 16px rgba(52,211,153,.25); }
-  .btn-yellow   { background: #431407; color: var(--yellow); border: 1px solid var(--yellow); }
-  .btn-yellow:hover { box-shadow: 0 4px 16px rgba(251,191,36,.2); }
-  .btn-red      { background: #450a0a; color: var(--red); border: 1px solid var(--red); }
-  .btn-red:hover { box-shadow: 0 4px 16px rgba(248,113,113,.2); }
-  .btn-ghost    { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
-  .btn-sm { padding: 4px 10px; font-size: 12px; }
-
-  .toolbar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 14px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .toolbar input[type="text"] { flex: 1; min-width: 200px; }
-  .filter-btn {
-    padding: 6px 14px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--bg3);
-    color: var(--muted);
-    font-size: 12px;
-    cursor: pointer;
-    transition: all .2s cubic-bezier(.34,1.56,.64,1);
-  }
-  .filter-btn:hover { transform: translateY(-1px); border-color: var(--neon2); color: var(--text); }
-  .filter-btn:active { transform: scale(.95); }
-  .filter-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(157,95,245,.1); box-shadow: 0 0 12px rgba(157,95,245,.2); }
-
-  .table-wrap {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  table { width: 100%; border-collapse: collapse; }
-  thead { background: var(--bg3); }
-  th {
-    padding: 10px 14px;
-    text-align: left;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  td {
-    padding: 10px 14px;
-    border-bottom: 1px solid rgba(42,42,58,.5);
-    vertical-align: middle;
-    transition: background .15s;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(157,95,245,.04); }
-  tr.row-enter { animation: rowIn .35s cubic-bezier(.22,1,.36,1) both; }
-
-  .key-text {
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 13px;
-    color: var(--neon);
-    cursor: pointer;
-    user-select: all;
-    transition: color .15s, letter-spacing .2s;
-  }
-  .key-text:hover { text-decoration: underline; letter-spacing: .3px; }
-
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
-  }
-  .badge:hover { transform: scale(1.1); }
-  .badge-active   { background: rgba(52,211,153,.12); color: var(--green); border: 1px solid rgba(52,211,153,.3); }
-  .badge-active:hover   { box-shadow: 0 0 10px rgba(52,211,153,.3); }
-  .badge-expired  { background: rgba(251,191,36,.12); color: var(--yellow); border: 1px solid rgba(251,191,36,.3); }
-  .badge-revoked  { background: rgba(248,113,113,.12); color: var(--red);  border: 1px solid rgba(248,113,113,.3); }
-  .badge-lifetime { background: rgba(157,95,245,.12); color: var(--neon); border: 1px solid rgba(157,95,245,.3); }
-  .badge-lifetime:hover { box-shadow: 0 0 12px rgba(157,95,245,.4); }
-
-  /* ── Badge produit vérifié ── */
-  .badge-verified {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 7px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 600;
-    background: rgba(52,211,153,.1);
-    color: var(--green);
-    border: 1px solid rgba(52,211,153,.25);
-  }
-  .badge-unverified {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 7px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 600;
-    background: rgba(107,107,128,.1);
-    color: var(--muted);
-    border: 1px solid rgba(107,107,128,.2);
-  }
-
-  .actions { display: flex; gap: 6px; }
-
-  #toast {
-    position: fixed;
-    bottom: 24px; right: 24px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-size: 13px;
-    transform: translateY(80px) scale(.92);
-    opacity: 0;
-    transition: all .3s cubic-bezier(.34,1.56,.64,1);
-    z-index: 999;
-    pointer-events: none;
-  }
-  #toast.show { transform: translateY(0) scale(1); opacity: 1; }
-  #toast.ok   { border-color: var(--green); color: var(--green); box-shadow: 0 4px 20px rgba(52,211,153,.15); }
-  #toast.err  { border-color: var(--red);   color: var(--red);   box-shadow: 0 4px 20px rgba(248,113,113,.15); }
-
-  .modal-bg {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.6);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 200;
-    animation: fadeIn .2s ease;
-  }
-  .modal-box {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 32px;
-    width: 440px;
-    max-width: 95vw;
-    animation: modalIn .3s cubic-bezier(.34,1.56,.64,1);
-  }
-  .modal-box h3 { margin-bottom: 16px; color: var(--neon); }
-  .modal-box .log-list { max-height: 300px; overflow-y: auto; }
-  .log-row {
-    display: flex; gap: 12px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    align-items: center;
-    animation: rowIn .25s ease both;
-  }
-  .log-row .ts  { color: var(--muted); min-width: 130px; }
-  .log-row .res { font-weight: 600; }
-  .log-row .res.OK, .log-row .res.OK_LINKED { color: var(--green); }
-  .log-row .res.EXPIRED, .log-row .res.HWID_MISMATCH { color: var(--yellow); }
-  .log-row .res.REVOKED, .log-row .res.INVALID_KEY, .log-row .res.WRONG_PRODUCT { color: var(--red); }
-
-  .empty-state {
-    padding: 40px;
-    text-align: center;
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  /* ── Product tabs ── */
-  .product-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .product-tab {
-    padding: 7px 16px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all .2s cubic-bezier(.34,1.56,.64,1);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .product-tab:hover { border-color: var(--neon2); color: var(--text); transform: translateY(-2px); }
-  .product-tab:active { transform: scale(.95); }
-  .product-tab.active { border-color: var(--neon); color: var(--neon); background: rgba(157,95,245,.12); box-shadow: 0 0 14px rgba(157,95,245,.2); }
-  .product-tab .tab-count {
-    background: rgba(255,255,255,.08);
-    border-radius: 10px;
-    padding: 1px 6px;
-    font-size: 11px;
-    transition: background .2s;
-  }
-  .product-tab.active .tab-count { background: rgba(157,95,245,.25); }
-  .product-tab .tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-  /* ── Product tab tsukasa-cfg highlight ── */
-  .product-tab[data-product="tsukasa-cfg"] {
-    border-color: rgba(124,58,237,.4);
-  }
-  .product-tab[data-product="tsukasa-cfg"].active {
-    border-color: var(--neon);
-    box-shadow: 0 0 18px rgba(157,95,245,.35);
-  }
-  .product-tab .verified-icon {
-    font-size: 10px;
-    color: var(--green);
-    opacity: 0.7;
-  }
-
-  /* ── Product manager ── */
-  .product-manager {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    margin-bottom: 16px;
-  }
-  .product-manager-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    user-select: none;
-  }
-  .product-manager-header span { font-size: 12px; color: var(--muted); }
-  .product-manager-header .arrow { transition: transform .2s; font-size: 11px; color: var(--muted); }
-  .product-manager-header.open .arrow { transform: rotate(90deg); }
-  .product-manager-body { display: none; margin-top: 14px; }
-  .product-manager-body.visible { display: block; }
-
-  .product-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .product-chip {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 5px 10px;
-    font-size: 12px;
-  }
-  /* Chip spéciale pour tsukasa-cfg */
-  .product-chip[data-id="tsukasa-cfg"] {
-    border-color: rgba(124,58,237,.5);
-    background: rgba(124,58,237,.06);
-  }
-  .product-chip .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .product-chip .chip-del {
-    cursor: pointer;
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1;
-    margin-left: 2px;
-  }
-  .product-chip .chip-del:hover { color: var(--red); }
-  .product-chip .chip-del.locked {
-    cursor: not-allowed;
-    opacity: 0.3;
-  }
-  .add-product-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .color-picker-wrap { display: flex; align-items: center; gap: 6px; }
-  input[type="color"] {
-    width: 34px; height: 34px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--bg3);
-    cursor: pointer;
-    padding: 2px;
-  }
-  .product-chip .chip-name {
-    cursor: pointer;
-    border-bottom: 1px dashed transparent;
-    transition: border-color .15s;
-  }
-  .product-chip .chip-name:hover { border-color: var(--neon2); color: var(--neon); }
-  .product-chip[data-id="tsukasa-cfg"] .chip-name {
-    cursor: default;
-    color: var(--neon);
-  }
-  .product-chip[data-id="tsukasa-cfg"] .chip-name:hover {
-    border-color: transparent;
-    color: var(--neon);
-  }
-
-  /* ── Info box produit vérifié ── */
-  .product-info-box {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: rgba(124,58,237,.07);
-    border: 1px solid rgba(124,58,237,.25);
-    border-left: 3px solid var(--neon2);
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-  .product-info-box .info-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
-  .product-info-box b { color: var(--neon); font-weight: 600; }
-
-  /* ── Security alerts ── */
-  .security-panel {
-    background: rgba(22,22,31,0.75);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(248,113,113,.25);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    margin-bottom: 24px;
-  }
-  .security-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    user-select: none;
-    justify-content: space-between;
-  }
-  .security-header-left { display: flex; align-items: center; gap: 10px; }
-  .security-title { font-size: 13px; font-weight: 600; color: var(--red); letter-spacing: .3px; }
-  .security-badge {
-    background: rgba(248,113,113,.15);
-    border: 1px solid rgba(248,113,113,.35);
-    border-radius: 10px;
-    padding: 1px 8px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--red);
-  }
-  .security-badge.zero { color: var(--green); background: rgba(52,211,153,.1); border-color: rgba(52,211,153,.3); }
-  .security-body { display: none; margin-top: 14px; }
-  .security-body.visible { display: block; }
-
-  .alert-list { display: flex; flex-direction: column; gap: 8px; }
-  .alert-item {
-    background: rgba(248,113,113,.05);
-    border: 1px solid rgba(248,113,113,.15);
-    border-left: 3px solid var(--red);
-    border-radius: 6px;
-    padding: 10px 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .alert-item.warn {
-    background: rgba(251,191,36,.05);
-    border-color: rgba(251,191,36,.15);
-    border-left-color: var(--yellow);
-  }
-  .alert-item.info {
-    background: rgba(157,95,245,.05);
-    border-color: rgba(157,95,245,.15);
-    border-left-color: var(--neon);
-  }
-  .alert-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
-  .alert-content { flex: 1; }
-  .alert-title { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
-  .alert-item .alert-title { color: var(--red); }
-  .alert-item.warn .alert-title { color: var(--yellow); }
-  .alert-item.info .alert-title { color: var(--neon); }
-  .alert-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
-  .alert-desc b { color: var(--text); font-weight: 500; }
-  .alert-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
-
-  .no-alerts {
-    text-align: center;
-    padding: 18px;
-    font-size: 12px;
-    color: var(--green);
-  }
-
-  @keyframes pulse-red {
-    0%, 100% { opacity: 1; }
-    50% { opacity: .4; }
-  }
-  .pulse { animation: pulse-red 1.4s infinite; }
-
-  .prod-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2px 7px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  /* Badge tsukasa-cfg mis en évidence */
-  .prod-badge.verified-prod {
-    background: rgba(124,58,237,.1);
-    border-color: rgba(124,58,237,.35);
-    color: var(--neon);
-  }
-  .prod-badge .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-
-  header .logo {
-    background: var(--neon2);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 5px;
-    letter-spacing: 1px;
-    animation: logoPulse 3s ease-in-out infinite;
-  }
-  header h1 { font-size: 16px; font-weight: 500; color: var(--neon); }
-  header .sep { flex: 1; }
-
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes rowIn {
-    from { opacity: 0; transform: translateX(-10px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(.88) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  @keyframes logoPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
-    50%       { box-shadow: 0 0 16px 4px rgba(124,58,237,.45); }
-  }
-  @keyframes countUp {
-    from { transform: translateY(8px); opacity: 0; }
-    to   { transform: translateY(0);   opacity: 1; }
-  }
-  @keyframes shimmer {
-    0%   { background-position: -400px 0; }
-    100% { background-position: 400px 0; }
-  }
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap');
+ 
+:root {
+  --bg:       #080810;
+  --bg2:      #0e0e1a;
+  --bg3:      #141426;
+  --bg4:      #1a1a2e;
+  --neon:     #a78bfa;
+  --neon2:    #7c3aed;
+  --neon3:    #4c1d95;
+  --cyan:     #22d3ee;
+  --cyan2:    #0891b2;
+  --green:    #4ade80;
+  --green2:   #16a34a;
+  --yellow:   #fbbf24;
+  --red:      #f87171;
+  --red2:     #dc2626;
+  --pink:     #f472b6;
+  --text:     #e2e0f0;
+  --muted:    #6b6b90;
+  --border:   #1e1e35;
+  --border2:  #2a2a45;
+  --radius:   10px;
+  --mono:     'JetBrains Mono', monospace;
+  --display:  'Syne', sans-serif;
+}
+ 
+*{box-sizing:border-box;margin:0;padding:0;}
+::selection{background:rgba(124,58,237,.35);color:var(--neon);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+ 
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--mono);
+  font-size:13px;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+ 
+/* ── CANVAS BG ── */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6;}
+ 
+/* ── SCANLINES overlay ── */
+body::after{
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);
+}
+ 
+header,#login-screen,.main,#toast,.modal-bg{position:relative;z-index:2;}
+ 
+/* ── LOGIN ── */
+#login-screen{
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);z-index:200;
+}
+.login-wrap{
+  width:380px;
+  border:1px solid var(--border2);
+  border-radius:16px;
+  padding:40px;
+  background:var(--bg2);
+  position:relative;
+  overflow:hidden;
+}
+.login-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.15),transparent 70%);
+  pointer-events:none;
+}
+.login-logo{
+  font-family:var(--display);
+  font-size:11px;font-weight:700;letter-spacing:4px;
+  color:var(--neon);text-transform:uppercase;
+  border:1px solid rgba(167,139,250,.25);
+  border-radius:4px;padding:4px 10px;
+  display:inline-block;margin-bottom:24px;
+}
+.login-title{font-family:var(--display);font-size:24px;font-weight:700;margin-bottom:6px;}
+.login-sub{color:var(--muted);font-size:12px;margin-bottom:28px;}
+.inp{
+  width:100%;background:var(--bg3);
+  border:1px solid var(--border2);border-radius:8px;
+  color:var(--text);padding:10px 14px;
+  font-family:var(--mono);font-size:13px;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  margin-bottom:12px;
+}
+.inp:focus{border-color:var(--neon2);box-shadow:0 0 0 3px rgba(124,58,237,.15);}
+.btn{
+  padding:9px 18px;border-radius:8px;border:none;
+  font-family:var(--mono);font-size:12px;cursor:pointer;
+  transition:transform .15s cubic-bezier(.34,1.56,.64,1),opacity .15s,box-shadow .2s;
+  white-space:nowrap;position:relative;overflow:hidden;
+}
+.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .15s;pointer-events:none;}
+.btn:hover{transform:translateY(-2px) scale(1.03);}
+.btn:hover::after{background:rgba(255,255,255,.06);}
+.btn:active{transform:scale(.96);transition-duration:.07s;}
+.btn-primary{background:linear-gradient(135deg,var(--neon2),#6d28d9);color:#fff;}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(124,58,237,.45);}
+.btn-sm{padding:5px 11px;font-size:11px;}
+.btn-green{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.3);}
+.btn-green:hover{box-shadow:0 4px 16px rgba(74,222,128,.2);}
+.btn-yellow{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
+.btn-yellow:hover{box-shadow:0 4px 14px rgba(251,191,36,.18);}
+.btn-red{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.3);}
+.btn-red:hover{box-shadow:0 4px 14px rgba(248,113,113,.18);}
+.btn-ghost{background:var(--bg3);color:var(--muted);border:1px solid var(--border2);}
+.btn-ghost:hover{color:var(--text);}
+.btn-cyan{background:rgba(34,211,238,.1);color:var(--cyan);border:1px solid rgba(34,211,238,.3);}
+.btn-cyan:hover{box-shadow:0 4px 14px rgba(34,211,238,.18);}
+.btn-pink{background:rgba(244,114,182,.1);color:var(--pink);border:1px solid rgba(244,114,182,.3);}
+.btn-pink:hover{box-shadow:0 4px 14px rgba(244,114,182,.15);}
+ 
+/* ── HEADER ── */
+header{
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:54px;
+  display:flex;align-items:center;gap:16px;
+  background:rgba(8,8,16,.9);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:10;
+}
+.h-logo{
+  font-family:var(--display);font-size:10px;font-weight:700;
+  letter-spacing:3px;color:var(--neon);
+  border:1px solid rgba(167,139,250,.25);border-radius:4px;
+  padding:4px 9px;
+}
+.h-title{font-family:var(--display);font-size:15px;font-weight:600;color:var(--text);}
+.h-sub{font-size:10px;color:var(--muted);}
+.h-sep{flex:1;}
+.h-status{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--muted);
+}
+.h-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+ 
+/* ── TABS ── */
+.tab-bar{
+  display:flex;align-items:center;gap:2px;
+  border-bottom:1px solid var(--border);
+  padding:0 24px;
+  background:rgba(8,8,16,.85);
+  backdrop-filter:blur(16px);
+  position:sticky;top:54px;z-index:9;
+  overflow-x:auto;
+}
+.tab-bar::-webkit-scrollbar{height:0;}
+.tab{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  padding:12px 16px;border-bottom:2px solid transparent;
+  cursor:pointer;white-space:nowrap;
+  transition:color .15s,border-color .15s;
+  display:flex;align-items:center;gap:7px;
+  user-select:none;
+}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--neon);border-bottom-color:var(--neon);}
+.tab .badge{
+  background:rgba(167,139,250,.15);color:var(--neon);
+  border-radius:20px;padding:1px 7px;font-size:10px;
+}
+.tab.active .badge{background:rgba(167,139,250,.25);}
+ 
+/* ── MAIN ── */
+.main{padding:20px 24px;max-width:1400px;margin:0 auto;}
+ 
+/* ── PAGE SECTIONS ── */
+.page{display:none;}
+.page.active{display:block;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+ 
+/* ── STATS GRID ── */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:10px;margin-bottom:20px;
+}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
+.stat{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;position:relative;overflow:hidden;
+  transition:border-color .25s,transform .2s cubic-bezier(.34,1.56,.64,1);
+  cursor:default;
+  animation:statIn .4s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes statIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.stat:hover{border-color:var(--border2);transform:translateY(-3px);}
+.stat::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent,var(--neon)),transparent);
+  opacity:.4;
+}
+.stat-val{font-family:var(--display);font-size:26px;font-weight:700;line-height:1;margin-bottom:3px;}
+.stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+.stat-delta{font-size:10px;margin-top:4px;}
+.stat-delta.up{color:var(--green);}
+.stat-delta.down{color:var(--red);}
+ 
+/* ── SECTION CARD ── */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 20px;
+  margin-bottom:16px;
+}
+.card-title{
+  font-family:var(--display);font-size:13px;font-weight:600;
+  color:var(--muted);text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.card-title .ct-dot{width:6px;height:6px;border-radius:50%;}
+ 
+/* ── CREATE FORM ── */
+.form-grid{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;}
+.field input,.field select{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:6px;color:var(--text);padding:7px 10px;
+  font-size:12px;outline:none;font-family:var(--mono);
+  transition:border-color .15s,box-shadow .15s;
+}
+.field input:focus,.field select:focus{border-color:var(--neon2);box-shadow:0 0 0 3px rgba(124,58,237,.12);}
+.field input[type=text]{width:200px;}
+.field input[type=number]{width:70px;}
+ 
+/* ── TOOLBAR ── */
+.toolbar{display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;}
+.toolbar input{flex:1;min-width:180px;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:7px 10px;font-size:12px;outline:none;font-family:var(--mono);transition:border-color .15s;}
+.toolbar input:focus{border-color:var(--neon2);}
+.filter-pill{
+  padding:5px 12px;border-radius:20px;border:1px solid var(--border2);
+  background:transparent;color:var(--muted);font-size:11px;font-family:var(--mono);
+  cursor:pointer;transition:all .18s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;
+}
+.filter-pill:hover{border-color:var(--neon2);color:var(--text);transform:translateY(-1px);}
+.filter-pill.active{border-color:var(--neon);color:var(--neon);background:rgba(167,139,250,.1);}
+ 
+/* ── TABLE ── */
+.table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead{background:var(--bg3);}
+th{padding:9px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;transition:color .15s;user-select:none;}
+th:hover{color:var(--text);}
+th.sorted{color:var(--neon);}
+td{padding:9px 12px;border-bottom:1px solid rgba(30,30,53,.6);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(167,139,250,.03);}
+tr.selected td{background:rgba(124,58,237,.07);}
+.row-enter{animation:rowIn .3s cubic-bezier(.22,1,.36,1) both;}
+@keyframes rowIn{from{opacity:0;transform:translateX(-8px);}to{opacity:1;transform:translateX(0);}}
+ 
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;transition:transform .18s cubic-bezier(.34,1.56,.64,1);}
+.badge:hover{transform:scale(1.08);}
+.b-active{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.25);}
+.b-expired{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.25);}
+.b-revoked{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.25);}
+.b-lifetime{background:rgba(167,139,250,.12);color:var(--neon);border:1px solid rgba(167,139,250,.25);}
+.b-ok{background:rgba(74,222,128,.1);color:var(--green);border:1px solid rgba(74,222,128,.2);}
+.b-rej{background:rgba(107,107,144,.08);color:var(--muted);border:1px solid rgba(107,107,144,.15);}
+.b-prod{display:inline-flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:11px;}
+.b-prod.vp{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.35);color:var(--neon);}
+ 
+/* ── KEY TEXT ── */
+.key-text{font-family:var(--mono);font-size:12px;color:var(--neon);cursor:pointer;user-select:all;transition:color .15s;}
+.key-text:hover{color:#c4b5fd;}
+ 
+/* ── SELECT ── */
+.prod-sel{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:11px;font-family:var(--mono);padding:3px 6px;transition:border-color .15s;}
+.prod-sel.vp{border-color:rgba(124,58,237,.4);}
+ 
+/* ── ACTIONS ── */
+.actions{display:flex;gap:4px;flex-wrap:wrap;}
+ 
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:10px;padding:12px 20px;font-size:12px;
+  transform:translateY(60px) scale(.9);opacity:0;
+  transition:all .28s cubic-bezier(.34,1.56,.64,1);
+  z-index:999;pointer-events:none;display:flex;align-items:center;gap:8px;
+  max-width:320px;font-family:var(--mono);
+}
+#toast.show{transform:translateY(0) scale(1);opacity:1;}
+#toast.ok{border-color:rgba(74,222,128,.4);color:var(--green);box-shadow:0 4px 20px rgba(74,222,128,.1);}
+#toast.err{border-color:rgba(248,113,113,.4);color:var(--red);box-shadow:0 4px 20px rgba(248,113,113,.1);}
+#toast.info{border-color:rgba(34,211,238,.4);color:var(--cyan);box-shadow:0 4px 20px rgba(34,211,238,.1);}
+ 
+/* ── MODALS ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:300;animation:fadeIn .15s ease;backdrop-filter:blur(4px);}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:28px 32px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);}
+@keyframes modalIn{from{opacity:0;transform:scale(.9) translateY(16px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal h3{font-family:var(--display);font-size:16px;font-weight:600;color:var(--neon);margin-bottom:16px;}
+.modal-actions{display:flex;gap:8px;margin-top:20px;}
+ 
+/* ── LOG MODAL ── */
+.log-row{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;align-items:center;}
+.log-row .ts{color:var(--muted);min-width:120px;}
+.log-row .res{font-weight:600;min-width:90px;}
+.log-row .res.OK,.log-row .res.OK_LINKED{color:var(--green);}
+.log-row .res.EXPIRED,.log-row .res.HWID_MISMATCH{color:var(--yellow);}
+.log-row .res.REVOKED,.log-row .res.INVALID_KEY,.log-row .res.WRONG_PRODUCT{color:var(--red);}
+ 
+/* ── PRODUCT MANAGER ── */
+.pm-chip{
+  display:flex;align-items:center;gap:6px;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:6px;padding:5px 10px;font-size:11px;
+}
+.pm-chip[data-id=tsukasa-cfg]{border-color:rgba(124,58,237,.4);background:rgba(124,58,237,.05);}
+.chip-del{cursor:pointer;color:var(--muted);font-size:13px;transition:color .15s;}
+.chip-del:hover{color:var(--red);}
+.chip-del.locked{cursor:not-allowed;opacity:.25;}
+.chip-name{cursor:pointer;transition:color .15s;}
+.chip-name:hover{color:var(--neon);}
+ 
+/* ── SECURITY ── */
+.sec-panel{background:var(--bg2);border:1px solid rgba(248,113,113,.2);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;}
+.sec-hdr{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;justify-content:space-between;}
+.sec-title{font-family:var(--display);font-size:12px;font-weight:600;color:var(--red);letter-spacing:.5px;display:flex;align-items:center;gap:8px;}
+.sec-badge{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);border-radius:10px;padding:1px 8px;font-size:10px;font-weight:600;color:var(--red);}
+.sec-badge.zero{color:var(--green);background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.25);}
+.alert-item{
+  background:rgba(248,113,113,.04);border:1px solid rgba(248,113,113,.12);
+  border-left:2px solid var(--red);border-radius:6px;
+  padding:10px 14px;display:flex;gap:10px;margin-bottom:8px;
+}
+.alert-item.warn{background:rgba(251,191,36,.04);border-color:rgba(251,191,36,.12);border-left-color:var(--yellow);}
+.alert-item.info{background:rgba(167,139,250,.04);border-color:rgba(167,139,250,.12);border-left-color:var(--neon);}
+.alert-title{font-size:11px;font-weight:600;margin-bottom:3px;}
+.alert-item .alert-title{color:var(--red);}
+.alert-item.warn .alert-title{color:var(--yellow);}
+.alert-item.info .alert-title{color:var(--neon);}
+.alert-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+.alert-desc b{color:var(--text);}
+.alert-meta{font-size:10px;color:var(--muted);margin-top:4px;}
+ 
+/* ── ANALYTICS ── */
+.chart-wrap{height:160px;position:relative;overflow:hidden;}
+.chart-bars{display:flex;align-items:flex-end;gap:3px;height:100%;padding-top:8px;}
+.chart-bar{
+  flex:1;border-radius:3px 3px 0 0;
+  transition:height .6s cubic-bezier(.34,1.56,.64,1),background .3s;
+  cursor:pointer;position:relative;min-height:2px;
+}
+.chart-bar:hover{filter:brightness(1.3);}
+.chart-bar .tooltip{
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:var(--bg4);border:1px solid var(--border2);border-radius:6px;
+  padding:5px 9px;font-size:10px;color:var(--text);white-space:nowrap;
+  opacity:0;transition:opacity .15s;pointer-events:none;z-index:5;
+}
+.chart-bar:hover .tooltip{opacity:1;}
+.chart-labels{display:flex;gap:3px;padding-top:6px;}
+.chart-lbl{flex:1;text-align:center;font-size:9px;color:var(--muted);}
+ 
+/* ── PRODUCT TABS ── */
+.prod-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.prod-tab{
+  padding:5px 14px;border-radius:20px;border:1px solid var(--border2);
+  background:transparent;color:var(--muted);font-size:11px;font-family:var(--mono);
+  cursor:pointer;transition:all .18s cubic-bezier(.34,1.56,.64,1);
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.prod-tab:hover{border-color:var(--neon2);color:var(--text);}
+.prod-tab.active{border-color:var(--neon);color:var(--neon);background:rgba(167,139,250,.1);}
+.prod-tab .tc{background:rgba(255,255,255,.07);border-radius:10px;padding:1px 6px;font-size:10px;}
+.prod-tab.active .tc{background:rgba(167,139,250,.2);}
+ 
+/* ── CHECKBOX ── */
+input[type=checkbox]{accent-color:var(--neon2);width:14px;height:14px;cursor:pointer;}
+ 
+/* ── BULK BAR ── */
+.bulk-bar{
+  display:none;align-items:center;gap:10px;flex-wrap:wrap;
+  background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.3);
+  border-radius:8px;padding:10px 16px;margin-bottom:12px;
+  font-size:12px;
+}
+.bulk-bar.visible{display:flex;}
+.bulk-count{color:var(--neon);font-weight:600;}
+ 
+/* ── INFO BOX ── */
+.info-box{
+  display:flex;align-items:flex-start;gap:10px;
+  background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.2);
+  border-left:3px solid var(--neon2);border-radius:6px;
+  padding:10px 14px;margin-bottom:14px;font-size:11px;color:var(--muted);line-height:1.6;
+}
+.info-box b{color:var(--neon);}
+ 
+/* ── NOTES ── */
+.note-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(34,211,238,.08);color:var(--cyan);
+  border:1px solid rgba(34,211,238,.2);border-radius:4px;
+  padding:1px 6px;font-size:10px;cursor:pointer;transition:background .15s;
+}
+.note-tag:hover{background:rgba(34,211,238,.15);}
+ 
+/* ── EXPORT / IMPORT ── */
+.export-wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+ 
+/* ── MINI SPARKLINE ── */
+.sparkline{height:24px;width:80px;display:inline-block;vertical-align:middle;}
+ 
+/* ── HEATMAP ── */
+.heatmap{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;margin-top:8px;}
+.heat-cell{
+  height:16px;border-radius:2px;
+  background:var(--bg3);
+  transition:background .3s,transform .15s;cursor:default;
+}
+.heat-cell:hover{transform:scale(1.2);}
+ 
+/* ── COLOR INPUT ── */
+input[type=color]{width:32px;height:32px;border-radius:5px;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;padding:2px;}
+ 
+/* ── COPY TAG ── */
+.copy-tag{font-size:9px;color:var(--muted);margin-left:4px;opacity:0;transition:opacity .15s;}
+.key-text:hover+.copy-tag{opacity:1;}
+ 
+/* ── GLITCH animation for header ── */
+@keyframes glitch{
+  0%,98%,100%{clip-path:none;transform:none;}
+  99%{clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%);transform:translate(-2px,0);}
+}
+.h-title{animation:glitch 8s infinite;}
+ 
+/* ── PILL ── */
+.pill{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;}
+.pill-up{background:rgba(74,222,128,.1);color:var(--green);}
+.pill-down{background:rgba(248,113,113,.1);color:var(--red);}
+ 
+/* ── PAGE: analytics specific ── */
+.analytic-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+@media(max-width:900px){.analytic-grid{grid-template-columns:1fr;}}
+.analytic-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;}
+.analytic-title{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:12px;}
+ 
+/* ── EMPTY ── */
+.empty{padding:36px;text-align:center;color:var(--muted);font-size:12px;}
+ 
+/* ── PULSE ── */
+@keyframes pulse-red{0%,100%{opacity:1;}50%{opacity:.35;}}
+.pulse{animation:pulse-red 1.4s infinite;}
+ 
+/* ── PROGRESS BAR ── */
+.progress-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:2px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}
 </style>
 </head>
 <body>
-
-<canvas id="galaxy-canvas"></canvas>
-
-<!-- Login -->
+ 
+<canvas id="bg-canvas"></canvas>
+ 
+<!-- ═══════════════════════════════ LOGIN ═══════════════════════════════ -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="logo" style="display:inline-block;margin-bottom:16px">TS</div>
-    <h2>Admin Panel</h2>
-    <p>Entrez le mot de passe administrateur</p>
-    <input type="password" id="secret-input" placeholder="Mot de passe..." style="width:100%;margin-bottom:14px" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Connexion</button>
-    <p id="login-err" style="color:var(--red);margin-top:10px;font-size:12px;display:none">Mot de passe incorrect.</p>
+  <div class="login-wrap">
+    <div class="login-logo">TSUKASA OPS</div>
+    <h2 class="login-title">Connexion Admin</h2>
+    <p class="login-sub">Accès restreint — Identifiants requis</p>
+    <input class="inp" type="password" id="secret-input" placeholder="Mot de passe admin…" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Accès système →</button>
+    <p id="login-err" style="color:var(--red);margin-top:10px;font-size:11px;display:none">⚠ Identifiants incorrects.</p>
   </div>
 </div>
-
+ 
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
 <header>
-  <span class="logo">TS</span>
-  <h1>Tsukasa_strafe — Licences</h1>
-  <span class="sep"></span>
-  <button class="btn btn-ghost btn-sm" onclick="refresh()">↺ Actualiser</button>
+  <div class="h-logo">TS</div>
+  <div>
+    <div class="h-title">Tsukasa_strafe</div>
+    <div class="h-sub">Licence Management System</div>
+  </div>
+  <div class="h-sep"></div>
+  <div class="h-status">
+    <div class="h-dot"></div>
+    <span id="h-uptime">LIVE</span>
+  </div>
+  <div id="h-time" style="font-size:11px;color:var(--muted);font-family:var(--mono)">--:--:--</div>
+  <button class="btn btn-ghost btn-sm" onclick="refresh()">↺ Sync</button>
+  <button class="btn btn-cyan btn-sm" onclick="exportCSV()">↓ Export</button>
 </header>
-
+ 
+<!-- ═══════════════════════════════ TAB BAR ═══════════════════════════════ -->
+<div class="tab-bar">
+  <div class="tab active" data-page="keys" onclick="switchPage(this)">
+    ⬡ Licences <span class="badge" id="tab-keys-count">0</span>
+  </div>
+  <div class="tab" data-page="analytics" onclick="switchPage(this)">
+    ◈ Analytics
+  </div>
+  <div class="tab" data-page="security" onclick="switchPage(this)">
+    ⬟ Sécurité <span class="badge" id="tab-sec-count" style="background:rgba(248,113,113,.15);color:var(--red)">—</span>
+  </div>
+  <div class="tab" data-page="products" onclick="switchPage(this)">
+    ◇ Produits
+  </div>
+  <div class="tab" data-page="tools" onclick="switchPage(this)">
+    ⬡ Outils
+  </div>
+</div>
+ 
+<!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
 <div class="main">
-
-  <!-- Stats -->
-  <div class="stats-row">
-    <div class="stat-card"><div class="val" id="s-total">—</div><div class="lbl">Total</div></div>
-    <div class="stat-card green"><div class="val" id="s-active">—</div><div class="lbl">Actives</div></div>
-    <div class="stat-card yellow"><div class="val" id="s-expired">—</div><div class="lbl">Expirées</div></div>
-    <div class="stat-card red"><div class="val" id="s-revoked">—</div><div class="lbl">Révoquées</div></div>
-    <div class="stat-card"><div class="val" id="s-checks">—</div><div class="lbl">Vérif. 24h</div></div>
-  </div>
-
-  <!-- Info box produit vérifié -->
-  <div class="product-info-box">
-    <span class="info-icon">🔒</span>
-    <div>
-      Le produit <b>tsukasa-cfg</b> est le seul produit autorisé par le client (patch C++).
-      Toute clé assignée à un autre produit — ou sans produit — sera <b>rejetée</b> par le vérificateur avec le message <b>"Wrong product"</b>.
-      Le produit tsukasa-cfg est <b>verrouillé</b> et ne peut pas être supprimé ni renommé.
-    </div>
-  </div>
-
-  <!-- Security alerts -->
-  <div class="security-panel">
-    <div class="security-header" onclick="toggleSecurity()">
-      <div class="security-header-left">
-        <span class="security-title">🛡 Alertes de sécurité</span>
-        <span class="security-badge zero" id="alert-badge">—</span>
+ 
+  <!-- ════════════ PAGE: LICENCES ════════════ -->
+  <div class="page active" id="page-keys">
+ 
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat" style="--accent:var(--neon);" data-delay=".05">
+        <div class="stat-val" id="s-total" style="color:var(--neon)">—</div>
+        <div class="stat-lbl">Total clés</div>
+        <div class="progress-bar"><div class="progress-fill" id="pr-total" style="background:var(--neon);width:100%"></div></div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();scanSecurity()" id="scan-btn">↺ Scanner</button>
-        <span style="font-size:11px;color:var(--muted)" id="scan-time"></span>
-        <span style="font-size:11px;color:var(--muted)">▶</span>
+      <div class="stat" style="--accent:var(--green);" data-delay=".1">
+        <div class="stat-val" id="s-active" style="color:var(--green)">—</div>
+        <div class="stat-lbl">Actives</div>
+        <div class="progress-bar"><div class="progress-fill" id="pr-active" style="background:var(--green);width:0%"></div></div>
+      </div>
+      <div class="stat" style="--accent:var(--yellow);" data-delay=".15">
+        <div class="stat-val" id="s-expired" style="color:var(--yellow)">—</div>
+        <div class="stat-lbl">Expirées</div>
+        <div class="progress-bar"><div class="progress-fill" id="pr-expired" style="background:var(--yellow);width:0%"></div></div>
+      </div>
+      <div class="stat" style="--accent:var(--red);" data-delay=".2">
+        <div class="stat-val" id="s-revoked" style="color:var(--red)">—</div>
+        <div class="stat-lbl">Révoquées</div>
+        <div class="progress-bar"><div class="progress-fill" id="pr-revoked" style="background:var(--red);width:0%"></div></div>
+      </div>
+      <div class="stat" style="--accent:var(--neon);" data-delay=".25">
+        <div class="stat-val" id="s-lifetime" style="color:var(--neon)">—</div>
+        <div class="stat-lbl">Lifetime</div>
+        <div class="progress-bar"><div class="progress-fill" id="pr-lifetime" style="background:var(--neon);width:0%"></div></div>
+      </div>
+      <div class="stat" style="--accent:var(--cyan);" data-delay=".3">
+        <div class="stat-val" id="s-checks" style="color:var(--cyan)">—</div>
+        <div class="stat-lbl">Vérif. 24h</div>
+        <div class="progress-bar"><div class="progress-fill" id="pr-checks" style="background:var(--cyan);width:60%"></div></div>
       </div>
     </div>
-    <div class="security-body" id="security-body">
-      <div class="security-scanning" id="alert-list"><em>Cliquez sur "Scanner" pour analyser les logs.</em></div>
+ 
+    <!-- Info box -->
+    <div class="info-box">
+      <span style="font-size:14px">🔒</span>
+      <div>Seul le produit <b>tsukasa-cfg</b> est accepté par le client C++. Les clés sans ce produit retournent <b>"Wrong product"</b> et sont rejetées. tsukasa-cfg est verrouillé (non supprimable, non renommable).</div>
     </div>
-  </div>
-
-  <!-- Product Manager -->
-  <div class="product-manager">
-    <div class="product-manager-header" onclick="toggleProductManager(this)">
-      <span class="logo" style="font-size:10px;padding:3px 8px">PRODUITS</span>
-      <span>Gérer les catégories de produits</span>
-      <span class="arrow">▶</span>
-    </div>
-    <div class="product-manager-body" id="pm-body">
-      <div class="product-list" id="pm-list"></div>
-      <div class="add-product-row">
-        <input type="text" id="pm-name" placeholder="Nom du produit…" style="width:180px">
-        <div class="color-picker-wrap">
-          <label style="font-size:11px;color:var(--muted)">Couleur</label>
-          <input type="color" id="pm-color" value="#9d5ff5">
+ 
+    <!-- Create -->
+    <div class="card">
+      <div class="card-title"><div class="ct-dot" style="background:var(--neon)"></div>Créer des licences</div>
+      <div class="form-grid">
+        <div class="field"><label>Qté</label><input type="number" id="c-count" value="1" min="1" max="100"></div>
+        <div class="field">
+          <label>Durée</label>
+          <select id="c-days" class="field input" style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:7px 10px;font-size:12px;font-family:var(--mono);outline:none;">
+            <option value="7">7 jours</option>
+            <option value="14">14 jours</option>
+            <option value="30" selected>30 jours</option>
+            <option value="60">60 jours</option>
+            <option value="90">90 jours</option>
+            <option value="180">6 mois</option>
+            <option value="365">1 an</option>
+            <option value="0">♾ Lifetime</option>
+          </select>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="addProduct()">+ Ajouter</button>
+        <div class="field">
+          <label>Produit</label>
+          <select id="c-product" style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:7px 10px;font-size:12px;font-family:var(--mono);outline:none;min-width:160px;">
+            <option value="">— Aucun —</option>
+          </select>
+        </div>
+        <div class="field"><label>Note / Client</label><input type="text" id="c-note" placeholder="ex: Discord user#1234" style="width:220px"></div>
+        <button class="btn btn-primary" onclick="createKeys()">+ Générer</button>
+      </div>
+      <div id="new-keys" style="font-family:var(--mono);font-size:11px;color:var(--neon);margin-top:10px;word-break:break-all;max-width:500px;"></div>
+    </div>
+ 
+    <!-- Bulk bar -->
+    <div class="bulk-bar" id="bulk-bar">
+      <span>✦</span>
+      <span><span class="bulk-count" id="bulk-count">0</span> clé(s) sélectionnée(s)</span>
+      <div style="flex:1"></div>
+      <button class="btn btn-yellow btn-sm" onclick="bulkExtend()">+Jours</button>
+      <button class="btn btn-ghost btn-sm" onclick="bulkResetHwid()">HWID↺</button>
+      <button class="btn btn-red btn-sm" onclick="bulkRevoke()">Révoquer</button>
+      <button class="btn btn-ghost btn-sm" onclick="clearSelection()">✕ Désélect.</button>
+    </div>
+ 
+    <!-- Product tabs -->
+    <div class="prod-tabs" id="prod-tabs"></div>
+ 
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="🔍  Rechercher clé, note, HWID, produit…" oninput="renderTable()">
+      <button class="filter-pill active" data-filter="all" onclick="setFilter(this)">Toutes</button>
+      <button class="filter-pill" data-filter="active" onclick="setFilter(this)">Actives</button>
+      <button class="filter-pill" data-filter="expired" onclick="setFilter(this)">Expirées</button>
+      <button class="filter-pill" data-filter="revoked" onclick="setFilter(this)">Révoquées</button>
+      <button class="filter-pill" data-filter="lifetime" onclick="setFilter(this)">Lifetime</button>
+      <button class="btn btn-ghost btn-sm" onclick="selectAll()">Tout sélect.</button>
+    </div>
+ 
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px"><input type="checkbox" id="chk-all" onchange="toggleAllCheck(this)"></th>
+            <th onclick="sortBy('key')">Clé <span id="sort-key"></span></th>
+            <th onclick="sortBy('product')">Produit</th>
+            <th>Vérifié</th>
+            <th onclick="sortBy('status')">Statut</th>
+            <th onclick="sortBy('expires_at')">Expiration</th>
+            <th>HWID</th>
+            <th onclick="sortBy('checks')">Vérif.</th>
+            <th>Note</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="keys-body">
+          <tr><td colspan="10" class="empty">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+ 
+    <!-- Pagination -->
+    <div id="pagination" style="display:flex;justify-content:center;align-items:center;gap:8px;padding:14px;font-size:11px;color:var(--muted);">
+      <button class="btn btn-ghost btn-sm" id="page-prev" onclick="changePage(-1)">◀ Préc.</button>
+      <span id="page-info">Page 1/1</span>
+      <button class="btn btn-ghost btn-sm" id="page-next" onclick="changePage(1)">Suiv. ▶</button>
+    </div>
+  </div>
+ 
+  <!-- ════════════ PAGE: ANALYTICS ════════════ -->
+  <div class="page" id="page-analytics">
+    <div class="analytic-grid">
+      <div class="analytic-card">
+        <div class="analytic-title">Vérifications — 7 derniers jours</div>
+        <div class="chart-wrap">
+          <div class="chart-bars" id="chart-checks"></div>
+        </div>
+        <div class="chart-labels" id="chart-checks-labels"></div>
+      </div>
+      <div class="analytic-card">
+        <div class="analytic-title">Résultats des vérifications</div>
+        <div id="results-breakdown" style="margin-top:8px;"></div>
       </div>
     </div>
+    <div class="analytic-grid">
+      <div class="analytic-card">
+        <div class="analytic-title">Répartition par produit</div>
+        <div id="product-breakdown" style="margin-top:8px;"></div>
+      </div>
+      <div class="analytic-card">
+        <div class="analytic-title">Distribution des statuts</div>
+        <div id="status-breakdown" style="margin-top:8px;"></div>
+      </div>
+    </div>
+    <div class="analytic-card" style="margin-bottom:16px;">
+      <div class="analytic-title">Activité horaire aujourd'hui (simulation)</div>
+      <div class="heatmap" id="heatmap-hour"></div>
+      <div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:var(--muted);">
+        <span>00h</span><span>06h</span><span>12h</span><span>18h</span><span>23h</span>
+      </div>
+    </div>
+    <div class="analytic-card">
+      <div class="analytic-title">Top clés les plus actives</div>
+      <div id="top-keys" style="margin-top:8px;"></div>
+    </div>
   </div>
-
-  <!-- Create -->
-  <div class="create-panel">
-    <div class="field">
-      <label>Quantité</label>
-      <input type="number" id="c-count" value="1" min="1" max="100">
+ 
+  <!-- ════════════ PAGE: SÉCURITÉ ════════════ -->
+  <div class="page" id="page-security">
+    <div class="card">
+      <div class="card-title">
+        <div class="ct-dot" style="background:var(--red)"></div>
+        Alertes de sécurité
+        <span class="sec-badge" id="sec-badge-main">—</span>
+        <div style="flex:1"></div>
+        <button class="btn btn-ghost btn-sm" id="scan-btn" onclick="scanSecurity()">↺ Scanner les logs</button>
+        <span id="scan-time" style="font-size:10px;color:var(--muted)"></span>
+      </div>
+      <div id="alert-list"><div class="empty">Cliquez sur "Scanner les logs" pour analyser.</div></div>
     </div>
-    <div class="field">
-      <label>Durée</label>
-      <select id="c-days" style="padding:8px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:13px">
-        <option value="7">7 jours</option>
-        <option value="14">14 jours</option>
-        <option value="30" selected>30 jours</option>
-        <option value="60">60 jours</option>
-        <option value="90">90 jours</option>
-        <option value="180">6 mois</option>
-        <option value="365">1 an</option>
-        <option value="0">Lifetime ♾</option>
-      </select>
+    <div class="card">
+      <div class="card-title"><div class="ct-dot" style="background:var(--yellow)"></div>IP Suspectes</div>
+      <div id="ip-table"><div class="empty">Lancez un scan d'abord.</div></div>
     </div>
-    <div class="field">
-      <label>Produit</label>
-      <select id="c-product" style="padding:8px 10px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:13px;min-width:160px">
-        <option value="">— Aucun —</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Note (client, commande…)</label>
-      <input type="text" id="c-note" placeholder="ex: Discord user#1234">
-    </div>
-    <button class="btn btn-primary" onclick="createKeys()">+ Créer</button>
-    <div id="new-keys" style="font-family:monospace;font-size:12px;color:var(--neon);padding:6px 0;word-break:break-all;max-width:400px"></div>
   </div>
-
-  <!-- Product tabs -->
-  <div class="product-tabs" id="product-tabs"></div>
-
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <input type="text" id="search" placeholder="Rechercher clé, note, HWID…" oninput="renderTable()">
-    <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">Toutes</button>
-    <button class="filter-btn" data-filter="active" onclick="setFilter(this)">Actives</button>
-    <button class="filter-btn" data-filter="expired" onclick="setFilter(this)">Expirées</button>
-    <button class="filter-btn" data-filter="revoked" onclick="setFilter(this)">Révoquées</button>
-    <button class="filter-btn" data-filter="lifetime" onclick="setFilter(this)">Lifetime</button>
+ 
+  <!-- ════════════ PAGE: PRODUITS ════════════ -->
+  <div class="page" id="page-products">
+    <div class="card">
+      <div class="card-title"><div class="ct-dot" style="background:var(--neon)"></div>Gestionnaire de produits</div>
+      <div class="info-box" style="margin-bottom:14px;">
+        <span>ℹ️</span>
+        <div>tsukasa-cfg est le produit <b>système verrouillé</b> — il est obligatoire pour les clés utilisées par le client C++. Les autres produits sont librement gérables.</div>
+      </div>
+      <div id="pm-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+      <div class="form-grid">
+        <div class="field"><label>Nom</label><input type="text" id="pm-name" placeholder="Nom du produit…"></div>
+        <div class="field"><label>Couleur</label><input type="color" id="pm-color" value="#22d3ee"></div>
+        <button class="btn btn-primary btn-sm" onclick="addProduct()">+ Ajouter produit</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="ct-dot" style="background:var(--cyan)"></div>Vue d'ensemble</div>
+      <div id="product-overview"></div>
+    </div>
   </div>
-
-  <!-- Table -->
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Clé</th>
-          <th>Produit</th>
-          <th>Vérifié</th>
-          <th>Statut</th>
-          <th>Expiration</th>
-          <th>HWID</th>
-          <th>Vérif.</th>
-          <th>Note</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="keys-body">
-        <tr><td colspan="9" class="empty-state">Chargement…</td></tr>
-      </tbody>
-    </table>
+ 
+  <!-- ════════════ PAGE: OUTILS ════════════ -->
+  <div class="page" id="page-tools">
+    <div class="analytic-grid">
+      <div class="card" style="margin:0;">
+        <div class="card-title"><div class="ct-dot" style="background:var(--green)"></div>Export / Import</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-green btn-sm" onclick="exportCSV()">↓ Export CSV complet</button>
+          <button class="btn btn-cyan btn-sm" onclick="exportJSON()">↓ Export JSON (méta)</button>
+          <div style="color:var(--muted);font-size:11px;margin-top:4px;">Les exports contiennent toutes les clés avec statuts, produits, HWID et notes.</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-title"><div class="ct-dot" style="background:var(--yellow)"></div>Actions de masse</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-yellow btn-sm" onclick="bulkAssignProduct()">Assigner tsukasa-cfg à toutes les clés actives sans produit</button>
+          <button class="btn btn-ghost btn-sm" onclick="purgeExpired()">Supprimer toutes les clés expirées</button>
+          <button class="btn btn-red btn-sm" style="opacity:.7" onclick="revokeAll()">Révoquer toutes les clés actives</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <div class="card-title"><div class="ct-dot" style="background:var(--pink)"></div>Vérificateur de clé rapide</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <input type="text" id="verify-key" placeholder="Entrez une clé à vérifier…" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:7px 10px;font-size:12px;font-family:var(--mono);outline:none;">
+        <button class="btn btn-pink btn-sm" onclick="quickVerify()">Vérifier</button>
+      </div>
+      <div id="verify-result"></div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <div class="card-title"><div class="ct-dot" style="background:var(--muted)"></div>Journal d'activité admin</div>
+      <div id="admin-log" style="max-height:200px;overflow-y:auto;font-size:11px;"></div>
+    </div>
+  </div>
+ 
+</div><!-- /main -->
+ 
+<!-- ════════════════ MODALS ════════════════ -->
+<!-- Log modal -->
+<div class="modal-bg" id="log-modal" style="display:none" onclick="if(event.target===this)closeModal('log-modal')">
+  <div class="modal">
+    <h3 id="modal-log-title">Historique</h3>
+    <div id="log-list"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('log-modal')">Fermer</button>
+    </div>
   </div>
 </div>
-
-<!-- Modal log -->
-<div class="modal-bg" id="log-modal" style="display:none" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box">
-    <h3 id="modal-title">Historique</h3>
-    <div class="log-list" id="log-list"></div>
-    <button class="btn btn-ghost" style="margin-top:16px;width:100%" onclick="closeModal()">Fermer</button>
-  </div>
-</div>
-
+ 
 <!-- Extend modal -->
-<div class="modal-bg" id="extend-modal" style="display:none" onclick="if(event.target===this)closeExtend()">
-  <div class="modal-box">
-    <h3>Prolonger / modifier</h3>
-    <p style="color:var(--muted);margin-bottom:16px;font-size:13px">Ajoute N jours depuis aujourd'hui (ou depuis l'expiration actuelle si dans le futur). Mettre 0 = lifetime.</p>
-    <div class="field" style="margin-bottom:14px">
+<div class="modal-bg" id="extend-modal" style="display:none" onclick="if(event.target===this)closeModal('extend-modal')">
+  <div class="modal">
+    <h3>Prolonger / modifier la durée</h3>
+    <p style="color:var(--muted);margin-bottom:16px;font-size:12px;">Ajoute N jours depuis aujourd'hui (ou depuis l'expiration si future). 0 = lifetime.</p>
+    <div class="field" style="margin-bottom:14px;">
       <label>Jours à ajouter</label>
       <input type="number" id="extend-days" value="30" min="0">
     </div>
-    <div style="display:flex;gap:10px">
+    <div class="modal-actions">
       <button class="btn btn-primary" onclick="doExtend()">Appliquer</button>
-      <button class="btn btn-ghost" onclick="closeExtend()">Annuler</button>
+      <button class="btn btn-ghost" onclick="closeModal('extend-modal')">Annuler</button>
     </div>
   </div>
 </div>
-
+ 
+<!-- Bulk extend modal -->
+<div class="modal-bg" id="bulk-extend-modal" style="display:none" onclick="if(event.target===this)closeModal('bulk-extend-modal')">
+  <div class="modal">
+    <h3>Prolonger la sélection</h3>
+    <div class="field" style="margin-bottom:14px;">
+      <label>Jours à ajouter</label>
+      <input type="number" id="bulk-extend-days" value="30" min="0">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="doBulkExtend()">Appliquer à la sélection</button>
+      <button class="btn btn-ghost" onclick="closeModal('bulk-extend-modal')">Annuler</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Note edit modal -->
+<div class="modal-bg" id="note-modal" style="display:none" onclick="if(event.target===this)closeModal('note-modal')">
+  <div class="modal">
+    <h3>Modifier la note</h3>
+    <div class="field" style="margin-bottom:14px;">
+      <label>Note</label>
+      <input type="text" id="note-input" style="width:100%" placeholder="Client, commande, Discord…">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="doEditNote()">Sauvegarder</button>
+      <button class="btn btn-ghost" onclick="closeModal('note-modal')">Annuler</button>
+    </div>
+  </div>
+</div>
+ 
 <div id="toast"></div>
-
+ 
 <script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
 let SECRET = "";
 let allKeys = [];
 let currentFilter = "all";
 let currentProduct = "";
 let extendTarget = null;
+let noteTarget = null;
+let sortKey = null;
+let sortDir = 1;
+let selectedKeys = new Set();
+let currentPage = 1;
+const PAGE_SIZE = 30;
 const now = () => Math.floor(Date.now() / 1000);
-
-// ── Produit système verrouillé ─────────────────────────────────
-// Ce produit est celui vérifié par le client C++ — il ne peut pas être supprimé ni renommé.
-const LOCKED_PRODUCT = {
-  id: "tsukasa-cfg",
-  name: "tsukasa-cfg",
-  color: "#7c3aed",
-  locked: true
-};
-
-// ── Products (local storage) ───────────────────────────────────
+ 
+// Admin log
+let adminLog = [];
+function addAdminLog(action) {
+  adminLog.unshift({ ts: Date.now(), action });
+  if (adminLog.length > 50) adminLog.pop();
+  renderAdminLog();
+}
+function renderAdminLog() {
+  const el = document.getElementById("admin-log");
+  if (!el) return;
+  if (adminLog.length === 0) { el.innerHTML = '<div class="empty">Aucune action.</div>'; return; }
+  el.innerHTML = adminLog.map(e => `
+    <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid var(--border);align-items:center;">
+      <span style="color:var(--muted);min-width:80px;">${new Date(e.ts).toLocaleTimeString("fr-FR")}</span>
+      <span>${e.action}</span>
+    </div>`).join("");
+}
+ 
+// ═══════════════════════════════════════════════
+// PRODUCTS (localStorage — même clé que v1)
+// ═══════════════════════════════════════════════
+const LOCKED_PRODUCT = { id:"tsukasa-cfg", name:"tsukasa-cfg", color:"#7c3aed", locked:true };
 const PRODUCTS_KEY = "tsukasa_products";
 let products = [];
-
+ 
 function loadProducts() {
-  try { products = JSON.parse(localStorage.getItem(PRODUCTS_KEY)) || []; }
-  catch { products = []; }
-
-  // S'assurer que tsukasa-cfg est toujours présent et en premier
+  try { products = JSON.parse(localStorage.getItem(PRODUCTS_KEY)) || []; } catch { products = []; }
   products = products.filter(p => p.id !== "tsukasa-cfg");
   products.unshift({ ...LOCKED_PRODUCT });
-
   saveProducts();
   renderProductManager();
   renderProductTabs();
   renderProductSelect();
 }
-
 function saveProducts() {
   localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
 }
-
+function getProduct(id) { return products.find(p => p.id === id); }
+ 
 function addProduct() {
   const name = document.getElementById("pm-name").value.trim();
   const color = document.getElementById("pm-color").value;
   if (!name) return;
-  if (name.toLowerCase() === "tsukasa-cfg") {
-    toast("Ce nom est réservé au produit système.", "err");
-    return;
-  }
-  products.push({ id: "p" + Date.now(), name, color });
+  if (name.toLowerCase() === "tsukasa-cfg") { toast("Nom réservé.", "err"); return; }
+  products.push({ id:"p"+Date.now(), name, color });
   saveProducts();
   document.getElementById("pm-name").value = "";
-  renderProductManager();
-  renderProductTabs();
-  renderProductSelect();
-  renderTable();
+  renderProductManager(); renderProductTabs(); renderProductSelect();
+  renderTable(); renderProductOverview();
   toast("Produit ajouté", "ok");
+  addAdminLog(`Produit créé : ${name}`);
 }
-
+ 
 function recolorProduct(id, color) {
-  if (id === "tsukasa-cfg") return; // verrouillé
+  if (id === "tsukasa-cfg") return;
   const p = products.find(p => p.id === id);
   if (!p) return;
-  p.color = color;
-  saveProducts();
-  renderProductManager();
-  renderProductTabs();
-  renderTable();
+  p.color = color; saveProducts();
+  renderProductManager(); renderProductTabs(); renderTable();
 }
-
+ 
 function renameProduct(id) {
-  if (id === "tsukasa-cfg") {
-    toast("tsukasa-cfg est verrouillé — il ne peut pas être renommé.", "err");
-    return;
-  }
+  if (id === "tsukasa-cfg") { toast("tsukasa-cfg est verrouillé.", "err"); return; }
   const p = products.find(p => p.id === id);
   if (!p) return;
-  const newName = prompt("Nouveau nom du produit :", p.name);
-  if (!newName || !newName.trim()) return;
-  if (newName.trim().toLowerCase() === "tsukasa-cfg") {
-    toast("Ce nom est réservé.", "err");
-    return;
-  }
-  p.name = newName.trim();
-  saveProducts();
-  renderProductManager();
-  renderProductTabs();
-  renderProductSelect();
-  renderTable();
+  const n = prompt("Nouveau nom :", p.name);
+  if (!n || !n.trim()) return;
+  if (n.trim().toLowerCase() === "tsukasa-cfg") { toast("Nom réservé.", "err"); return; }
+  addAdminLog(`Produit renommé : ${p.name} → ${n.trim()}`);
+  p.name = n.trim(); saveProducts();
+  renderProductManager(); renderProductTabs(); renderProductSelect(); renderTable();
   toast("Produit renommé", "ok");
 }
-
+ 
 function deleteProduct(id) {
-  if (id === "tsukasa-cfg") {
-    toast("tsukasa-cfg est verrouillé — il ne peut pas être supprimé.", "err");
-    return;
-  }
-  if (!confirm("Supprimer ce produit ? Les clés associées perdront leur catégorie.")) return;
+  if (id === "tsukasa-cfg") { toast("tsukasa-cfg est verrouillé.", "err"); return; }
+  const p = getProduct(id);
+  if (!confirm(`Supprimer "${p?.name}" ?`)) return;
   products = products.filter(p => p.id !== id);
   allKeys.forEach(k => { if (k.product === id) k.product = ""; });
-  saveProducts();
-  saveKeysLocal();
+  saveProducts(); saveKeysLocal();
   if (currentProduct === id) currentProduct = "";
-  renderProductManager();
-  renderProductTabs();
-  renderProductSelect();
-  renderTable();
+  renderProductManager(); renderProductTabs(); renderProductSelect(); renderTable();
+  toast("Produit supprimé", "ok");
+  addAdminLog(`Produit supprimé : ${p?.name}`);
 }
-
-function getProduct(id) {
-  return products.find(p => p.id === id);
-}
-
+ 
 function renderProductManager() {
   const list = document.getElementById("pm-list");
-  if (products.length === 0) {
-    list.innerHTML = '<span style="font-size:12px;color:var(--muted)">Aucun produit.</span>';
-    return;
-  }
+  if (!list) return;
   list.innerHTML = products.map(p => {
-    const isLocked = p.id === "tsukasa-cfg";
-    const delBtn = isLocked
-      ? `<span class="chip-del locked" title="Produit système verrouillé">🔒</span>`
-      : `<span class="chip-del" onclick="deleteProduct('${p.id}')" title="Supprimer">×</span>`;
-    const colorPicker = isLocked
-      ? `<span style="font-size:10px;color:var(--neon);opacity:.7">SYSTÈME</span>`
-      : `<input type="color" value="${p.color}" style="width:20px;height:20px;border:none;background:none;cursor:pointer;padding:0;border-radius:3px" onchange="recolorProduct('${p.id}', this.value)" title="Changer la couleur">`;
-    return `
-      <div class="product-chip" data-id="${p.id}">
-        <div class="chip-dot" style="background:${p.color}"></div>
-        <span class="chip-name" onclick="renameProduct('${p.id}')" title="${isLocked ? 'Produit système — renommage désactivé' : 'Cliquer pour renommer'}">${p.name}</span>
-        ${colorPicker}
-        ${delBtn}
-      </div>`;
+    const locked = p.id === "tsukasa-cfg";
+    const del = locked
+      ? `<span class="chip-del locked" title="Verrouillé">🔒</span>`
+      : `<span class="chip-del" onclick="deleteProduct('${p.id}')">×</span>`;
+    const cp = locked
+      ? `<span style="font-size:9px;color:var(--neon);opacity:.7">SYS</span>`
+      : `<input type="color" value="${p.color}" style="width:20px;height:20px;border:none;background:none;cursor:pointer;padding:0;" onchange="recolorProduct('${p.id}',this.value)">`;
+    return `<div class="pm-chip" data-id="${p.id}">
+      <div style="width:7px;height:7px;border-radius:50%;background:${p.color};flex-shrink:0;"></div>
+      <span class="chip-name" onclick="renameProduct('${p.id}')">${p.name}</span>
+      ${cp} ${del}
+    </div>`;
   }).join("");
+  renderProductOverview();
 }
-
+ 
+function renderProductOverview() {
+  const el = document.getElementById("product-overview");
+  if (!el) return;
+  const counters = {};
+  allKeys.forEach(k => { counters[k.product || "_none"] = (counters[k.product || "_none"] || 0) + 1; });
+  el.innerHTML = products.map(p => {
+    const c = counters[p.id] || 0;
+    const pct = allKeys.length ? (c / allKeys.length * 100) : 0;
+    return `<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;">
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${p.color};display:inline-block;"></span>
+          ${p.name}${p.locked ? " 🔒" : ""}
+        </span>
+        <span style="color:var(--muted)">${c} clé${c>1?"s":""} — ${pct.toFixed(1)}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${p.color};width:${pct}%"></div></div>
+    </div>`;
+  }).join("") + (counters["_none"] ? `<div style="margin-bottom:12px;">
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;">
+      <span style="color:var(--muted)">— Sans produit</span>
+      <span style="color:var(--red)">${counters["_none"]} clé${counters["_none"]>1?"s":""}</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="background:var(--red);width:${(counters["_none"]/allKeys.length*100).toFixed(1)}%"></div></div>
+  </div>` : "");
+}
+ 
 function renderProductTabs() {
-  const wrap = document.getElementById("product-tabs");
-  const allCount = allKeys.length;
+  const wrap = document.getElementById("prod-tabs");
+  if (!wrap) return;
   const counters = {};
   allKeys.forEach(k => { if (k.product) counters[k.product] = (counters[k.product] || 0) + 1; });
-
-  const tabs = products.map(p => {
-    const isLocked = p.id === "tsukasa-cfg";
-    const verifiedIcon = isLocked ? `<span class="verified-icon">✓</span>` : "";
-    return `
-      <div class="product-tab${currentProduct === p.id ? " active" : ""}" data-product="${p.id}" onclick="setProductFilter(this)">
-        <div class="tab-dot" style="background:${p.color}"></div>
-        <span>${p.name}</span>
-        ${verifiedIcon}
-        <span class="tab-count">${counters[p.id] || 0}</span>
-      </div>`;
-  }).join("");
-
-  wrap.innerHTML = `
-    <div class="product-tab${currentProduct === "" ? " active" : ""}" data-product="" onclick="setProductFilter(this)">
-      <span>Tous</span>
-      <span class="tab-count">${allCount}</span>
-    </div>
-    ${tabs}`;
+  wrap.innerHTML = `<div class="prod-tab${currentProduct===""?" active":""}" data-product="" onclick="setProdFilter(this)">
+    <span>Tous</span><span class="tc">${allKeys.length}</span>
+  </div>` + products.map(p =>
+    `<div class="prod-tab${currentProduct===p.id?" active":""}" data-product="${p.id}" onclick="setProdFilter(this)">
+      <div style="width:6px;height:6px;border-radius:50%;background:${p.color};flex-shrink:0;"></div>
+      <span>${p.name}${p.locked?" ✓":""}</span>
+      <span class="tc">${counters[p.id]||0}</span>
+    </div>`
+  ).join("");
 }
-
+ 
 function renderProductSelect() {
-  const sel = document.getElementById("c-product");
-  const val = sel.value;
-  sel.innerHTML = '<option value="">— Aucun (non vérifié) —</option>' +
-    products.map(p => {
-      const isLocked = p.id === "tsukasa-cfg";
-      const label = isLocked ? `${p.name} ✓ (requis par le client)` : p.name;
-      return `<option value="${p.id}"${val === p.id ? " selected" : ""}>${label}</option>`;
-    }).join("");
+  const s = document.getElementById("c-product");
+  if (!s) return;
+  const v = s.value;
+  s.innerHTML = '<option value="">— Aucun (non vérifié) —</option>' +
+    products.map(p => `<option value="${p.id}"${v===p.id?" selected":""}>${p.name}${p.locked?" ✓ (requis)":""}</option>`).join("");
 }
-
-function setProductFilter(el) {
+ 
+function setProdFilter(el) {
   currentProduct = el.dataset.product;
-  renderProductTabs();
-  renderTable();
+  renderProductTabs(); currentPage = 1; renderTable();
 }
-
-function toggleProductManager(el) {
-  el.classList.toggle("open");
-  document.getElementById("pm-body").classList.toggle("visible");
-}
-
-// ── Local key product store ────────────────────────────────────
+ 
+// ═══════════════════════════════════════════════
+// KEYS META (localStorage — même clé que v1)
+// ═══════════════════════════════════════════════
 const KEYS_META_KEY = "tsukasa_keys_meta";
 let keysMeta = {};
-
+ 
 function loadKeysMeta() {
-  try { keysMeta = JSON.parse(localStorage.getItem(KEYS_META_KEY)) || {}; }
-  catch { keysMeta = {}; }
+  try { keysMeta = JSON.parse(localStorage.getItem(KEYS_META_KEY)) || {}; } catch { keysMeta = {}; }
 }
-
 function saveKeysLocal() {
   localStorage.setItem(KEYS_META_KEY, JSON.stringify(keysMeta));
 }
-
 function applyMeta(keys) {
-  return keys.map(k => ({ ...k, product: keysMeta[k.key]?.product || "" }));
+  return keys.map(k => ({ ...k, product: keysMeta[k.key]?.product || "", note2: keysMeta[k.key]?.note || "" }));
 }
-
-// ── Login ──────────────────────────────────────────────────────
+ 
+// ═══════════════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════════════
 function doLogin() {
   const v = document.getElementById("secret-input").value.trim();
   if (!v) return;
   SECRET = v;
   loadAll();
 }
-
-// ── Fetch helpers ──────────────────────────────────────────────
+ 
+// ═══════════════════════════════════════════════
+// API
+// ═══════════════════════════════════════════════
 async function api(method, path, body) {
-  const opts = {
-    method,
-    headers: { "Content-Type": "application/json", "x-admin-secret": SECRET },
-  };
+  const opts = { method, headers: { "Content-Type":"application/json", "x-admin-secret":SECRET } };
   if (body) opts.body = JSON.stringify(body);
   const r = await fetch(path, opts);
   if (r.status === 401) {
@@ -1025,590 +1044,970 @@ async function api(method, path, body) {
   }
   return r.json();
 }
-
-// ── Load all data ──────────────────────────────────────────────
+ 
+// ═══════════════════════════════════════════════
+// LOAD ALL
+// ═══════════════════════════════════════════════
 async function loadAll() {
   const [keys, stats] = await Promise.all([
-    api("GET", "/admin/keys"),
-    api("GET", "/admin/stats"),
+    api("GET","/admin/keys"),
+    api("GET","/admin/stats"),
   ]);
   if (!keys) return;
   document.getElementById("login-screen").style.display = "none";
   loadKeysMeta();
   allKeys = applyMeta(keys);
-  animateCount("s-total",   stats.total);
-  animateCount("s-active",  stats.active);
-  animateCount("s-expired", stats.expired);
-  animateCount("s-revoked", stats.revoked);
-  animateCount("s-checks",  stats.checksToday);
+ 
+  // Animate stats
+  const total = stats.total || 0;
+  animCount("s-total", stats.total);
+  animCount("s-active", stats.active);
+  animCount("s-expired", stats.expired);
+  animCount("s-revoked", stats.revoked);
+  animCount("s-checks", stats.checksToday);
+ 
+  // Lifetime count
+  const lifetimeCount = allKeys.filter(k => k.expires_at === 0).length;
+  animCount("s-lifetime", lifetimeCount);
+ 
+  // Progress bars
+  if (total > 0) {
+    setTimeout(() => {
+      document.getElementById("pr-active").style.width = (stats.active/total*100)+"%";
+      document.getElementById("pr-expired").style.width = (stats.expired/total*100)+"%";
+      document.getElementById("pr-revoked").style.width = (stats.revoked/total*100)+"%";
+      document.getElementById("pr-lifetime").style.width = (lifetimeCount/total*100)+"%";
+    }, 200);
+  }
+ 
+  // Tab count
+  document.getElementById("tab-keys-count").textContent = total;
+ 
   renderProductTabs();
   renderTable();
+  renderAnalytics();
+  renderProductOverview();
+  addAdminLog("Données synchronisées");
 }
-
-function animateCount(id, target) {
+ 
+function animCount(id, target) {
   const el = document.getElementById(id);
+  if (!el) return;
   const start = parseInt(el.textContent) || 0;
   const end = parseInt(target) || 0;
   if (start === end) { el.textContent = end; return; }
-  const duration = 600;
-  const startTime = performance.now();
-  el.style.animation = "countUp .3s ease both";
+  const dur = 700;
+  const t0 = performance.now();
   function step(t) {
-    const p = Math.min((t - startTime) / duration, 1);
-    const ease = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(start + (end - start) * ease);
-    if (p < 1) requestAnimationFrame(step);
-    else { el.textContent = end; el.style.animation = ""; }
+    const p = Math.min((t-t0)/dur,1);
+    const ease = 1-Math.pow(1-p,3);
+    el.textContent = Math.round(start+(end-start)*ease);
+    if (p<1) requestAnimationFrame(step);
+    else el.textContent = end;
   }
   requestAnimationFrame(step);
 }
-
-function refresh() { loadAll(); }
-
-// ── Render table ───────────────────────────────────────────────
+ 
+function refresh() { loadAll(); toast("Synchronisation…","info"); }
+ 
+// ═══════════════════════════════════════════════
+// TABLE
+// ═══════════════════════════════════════════════
 function setFilter(el) {
-  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".filter-pill").forEach(b=>b.classList.remove("active"));
   el.classList.add("active");
   currentFilter = el.dataset.filter;
-  renderTable();
+  currentPage = 1; renderTable();
 }
-
-function getStatus(row) {
-  if (row.revoked) return "revoked";
-  if (row.expires_at === 0) return "lifetime";
-  if (row.expires_at < now()) return "expired";
+ 
+function getStatus(r) {
+  if (r.revoked) return "revoked";
+  if (r.expires_at === 0) return "lifetime";
+  if (r.expires_at < now()) return "expired";
   return "active";
 }
-
+ 
 function fmtDate(ts) {
   if (ts === 0) return "♾ Lifetime";
-  return new Date(ts * 1000).toLocaleDateString("fr-FR", {
-    day: "2-digit", month: "2-digit", year: "numeric"
-  });
+  return new Date(ts*1000).toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric"});
 }
-
+ 
 function daysLeft(ts) {
   if (ts === 0) return "";
-  const d = Math.ceil((ts - now()) / 86400);
+  const d = Math.ceil((ts-now())/86400);
   if (d <= 0) return "";
   if (d <= 7) return ` <span style="color:var(--yellow)">(${d}j)</span>`;
   return ` <span style="color:var(--muted)">(${d}j)</span>`;
 }
-
-// Vérifie si une clé passera la vérification produit du client C++
-function isProductVerified(productId) {
-  return productId === "tsukasa-cfg";
+ 
+let filteredRows = [];
+ 
+function sortBy(key) {
+  if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+  document.querySelectorAll("th[onclick^='sortBy']").forEach(th => {
+    const k = th.getAttribute("onclick").replace("sortBy('","").replace("')","");
+    th.classList.toggle("sorted", k === sortKey);
+  });
+  renderTable();
 }
-
+ 
 function renderTable() {
   const q = document.getElementById("search").value.toLowerCase();
   let rows = allKeys.filter(r => {
     const status = getStatus(r);
     if (currentFilter !== "all" && status !== currentFilter) return false;
     if (currentProduct !== "" && r.product !== currentProduct) return false;
-    if (q) return (r.key + r.note + (r.hwid||"") + (r.product||"")).toLowerCase().includes(q);
+    if (q) {
+      const p = getProduct(r.product);
+      return (r.key+r.note+(r.hwid||"")+(r.product||"")+(p?.name||"")+(r.note2||"")).toLowerCase().includes(q);
+    }
     return true;
   });
-
+ 
+  if (sortKey) {
+    rows.sort((a,b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      if (sortKey === "status") { av = getStatus(a); bv = getStatus(b); }
+      if (av < bv) return -1*sortDir;
+      if (av > bv) return 1*sortDir;
+      return 0;
+    });
+  }
+ 
+  filteredRows = rows;
+  const total = rows.length;
+  const totalPages = Math.max(1, Math.ceil(total/PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = 1;
+  const start = (currentPage-1)*PAGE_SIZE;
+  const pageRows = rows.slice(start, start+PAGE_SIZE);
+ 
+  document.getElementById("page-info").textContent = `Page ${currentPage}/${totalPages}`;
+  document.getElementById("page-prev").disabled = currentPage <= 1;
+  document.getElementById("page-next").disabled = currentPage >= totalPages;
+ 
   const tbody = document.getElementById("keys-body");
-  if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Aucune clé trouvée.</td></tr>';
+  if (pageRows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" class="empty">Aucune clé trouvée.</td></tr>`;
     return;
   }
-
-  tbody.innerHTML = rows.map((r, i) => {
+ 
+  tbody.innerHTML = pageRows.map((r, i) => {
     const status = getStatus(r);
-    const badgeClass = `badge-${status}`;
-    const badgeLabel = { active: "Actif", expired: "Expiré", revoked: "Révoqué", lifetime: "Lifetime" }[status];
+    const bClass = {active:"b-active",expired:"b-expired",revoked:"b-revoked",lifetime:"b-lifetime"}[status];
+    const bLabel = {active:"Actif",expired:"Expiré",revoked:"Révoqué",lifetime:"Lifetime"}[status];
     const hwid = r.hwid
-      ? `<span style="font-size:11px;color:var(--muted)">${r.hwid.slice(0,12)}…</span>`
-      : `<span style="color:var(--border)">—</span>`;
-    const exp = `${fmtDate(r.expires_at)}${status === "active" ? daysLeft(r.expires_at) : ""}`;
-
+      ? `<span style="font-size:10px;color:var(--muted)">${r.hwid.slice(0,10)}…</span>`
+      : `<span style="color:var(--border2)">—</span>`;
+    const exp = `${fmtDate(r.expires_at)}${status==="active"?daysLeft(r.expires_at):""}`;
+ 
     const prod = getProduct(r.product);
-    const verified = isProductVerified(r.product);
-
-    // Colonne produit
+    const verified = r.product === "tsukasa-cfg";
     const prodCell = prod
-      ? `<div class="prod-badge${verified ? " verified-prod" : ""}">
-           <div class="dot" style="background:${prod.color}"></div>${prod.name}
-         </div>`
-      : `<span style="color:var(--border)">—</span>`;
-
-    // Colonne vérification produit C++
-    const verifiedCell = verified
-      ? `<span class="badge-verified">✓ OK</span>`
-      : `<span class="badge-unverified">✗ Rejeté</span>`;
-
-    const prodOptions = '<option value="">— Aucun (non vérifié) —</option>' +
-      products.map(p => {
-        const isLocked = p.id === "tsukasa-cfg";
-        const label = isLocked ? `${p.name} ✓` : p.name;
-        return `<option value="${p.id}"${r.product === p.id ? " selected" : ""}>${label}</option>`;
-      }).join("");
-
-    const btnRevoke = r.revoked
-      ? `<button class="btn btn-green btn-sm" onclick="restore('${r.key}')">Restaurer</button>`
+      ? `<div class="b-prod${verified?" vp":""}"><div style="width:5px;height:5px;border-radius:50%;background:${prod.color};"></div>${prod.name}</div>`
+      : `<span style="color:var(--border2)">—</span>`;
+    const verCell = verified
+      ? `<span class="badge b-ok">✓ OK</span>`
+      : `<span class="badge b-rej">✗ Rejeté</span>`;
+ 
+    const opts = `<option value="">— Aucun —</option>` +
+      products.map(p => `<option value="${p.id}"${r.product===p.id?" selected":""}>${p.name}${p.locked?" ✓":""}</option>`).join("");
+ 
+    const btnRev = r.revoked
+      ? `<button class="btn btn-green btn-sm" onclick="restore('${r.key}')">↺ Restaurer</button>`
       : `<button class="btn btn-red btn-sm" onclick="revoke('${r.key}')">Révoquer</button>`;
-
-    const delay = Math.min(i * 35, 400);
-    return `<tr class="row-enter" style="animation-delay:${delay}ms">
-      <td><span class="key-text" onclick="copyKey('${r.key}')" title="Cliquer pour copier">${r.key}</span></td>
+ 
+    const note = r.note2 || r.note;
+    const noteCell = note
+      ? `<span class="note-tag" onclick="openNoteModal('${r.key}','${(note||"").replace(/'/g,"&#39;")}')">${note.slice(0,22)}${note.length>22?"…":""}</span>`
+      : `<span style="color:var(--border2);cursor:pointer;font-size:10px;" onclick="openNoteModal('${r.key}','')">+ ajouter</span>`;
+ 
+    const chk = selectedKeys.has(r.key) ? "checked" : "";
+    const sel = selectedKeys.has(r.key) ? " selected" : "";
+    const delay = Math.min(i*25, 300);
+    return `<tr class="row-enter${sel}" style="animation-delay:${delay}ms" id="row-${r.key.replace(/[^a-z0-9]/gi,"")}">
+      <td><input type="checkbox" ${chk} onchange="toggleSelect('${r.key}',this)"></td>
+      <td><span class="key-text" onclick="copyKey('${r.key}')" title="Copier">${r.key}</span></td>
       <td>
-        <select class="prod-select"
-          style="background:var(--bg3);border:1px solid ${verified ? 'rgba(124,58,237,.4)' : 'var(--border)'};border-radius:4px;color:var(--text);font-size:12px;padding:3px 6px;transition:border-color .2s"
-          onchange="setKeyProduct('${r.key}', this.value)">
-          ${prodOptions}
-        </select>
+        <select class="prod-sel${verified?" vp":""}" onchange="setKeyProduct('${r.key}',this.value)">${opts}</select>
       </td>
-      <td>${verifiedCell}</td>
-      <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
-      <td>${exp}</td>
+      <td>${verCell}</td>
+      <td><span class="badge ${bClass}">${bLabel}</span></td>
+      <td style="font-size:11px;">${exp}</td>
       <td>${hwid}</td>
-      <td style="color:var(--muted)">${r.checks}</td>
-      <td style="color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.note || "—"}</td>
+      <td style="color:var(--cyan);font-size:11px;">${r.checks}</td>
+      <td>${noteCell}</td>
       <td>
         <div class="actions">
-          <button class="btn btn-yellow btn-sm" onclick="openExtend('${r.key}')">+Jours</button>
+          <button class="btn btn-yellow btn-sm" onclick="openExtend('${r.key}')">+j</button>
           <button class="btn btn-ghost btn-sm" onclick="resetHwid('${r.key}')">HWID↺</button>
           <button class="btn btn-ghost btn-sm" onclick="openLog('${r.key}')">Log</button>
-          ${btnRevoke}
-          <button class="btn btn-red btn-sm" onclick="deleteKey('${r.key}')" style="opacity:.6">✕</button>
+          ${btnRev}
+          <button class="btn btn-red btn-sm" style="opacity:.5" onclick="deleteKey('${r.key}')">✕</button>
         </div>
       </td>
     </tr>`;
   }).join("");
 }
-
-// ── Assign product to key (local) ─────────────────────────────
+ 
+function changePage(dir) {
+  const total = filteredRows.length;
+  const totalPages = Math.max(1, Math.ceil(total/PAGE_SIZE));
+  currentPage = Math.max(1, Math.min(totalPages, currentPage + dir));
+  renderTable();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+ 
+// ═══════════════════════════════════════════════
+// SELECTION
+// ═══════════════════════════════════════════════
+function toggleSelect(key, cb) {
+  if (cb.checked) selectedKeys.add(key); else selectedKeys.delete(key);
+  updateBulkBar();
+  const row = document.getElementById("row-"+key.replace(/[^a-z0-9]/gi,""));
+  if (row) row.classList.toggle("selected", cb.checked);
+}
+function toggleAllCheck(cb) {
+  filteredRows.forEach(r => {
+    if (cb.checked) selectedKeys.add(r.key); else selectedKeys.delete(r.key);
+  });
+  updateBulkBar(); renderTable();
+}
+function selectAll() {
+  filteredRows.forEach(r => selectedKeys.add(r.key));
+  updateBulkBar(); renderTable();
+}
+function clearSelection() {
+  selectedKeys.clear();
+  updateBulkBar(); renderTable();
+}
+function updateBulkBar() {
+  const bar = document.getElementById("bulk-bar");
+  const cnt = document.getElementById("bulk-count");
+  bar.classList.toggle("visible", selectedKeys.size > 0);
+  cnt.textContent = selectedKeys.size;
+}
+ 
+// ═══════════════════════════════════════════════
+// ASSIGN PRODUCT
+// ═══════════════════════════════════════════════
 function setKeyProduct(key, productId) {
   if (!keysMeta[key]) keysMeta[key] = {};
   keysMeta[key].product = productId;
   saveKeysLocal();
-  const k = allKeys.find(k => k.key === key);
+  const k = allKeys.find(k=>k.key===key);
   if (k) k.product = productId;
-  renderProductTabs();
-  renderTable();
-
-  // Avertissement si on assigne à un produit autre que tsukasa-cfg
+  renderProductTabs(); renderTable(); renderProductOverview();
   if (productId && productId !== "tsukasa-cfg") {
-    toast("⚠ Cette clé sera rejetée par le client (produit ≠ tsukasa-cfg)", "err");
+    toast("⚠ Clé rejetée par le client (≠ tsukasa-cfg)", "err");
   } else if (productId === "tsukasa-cfg") {
-    toast("✓ Clé assignée à tsukasa-cfg — autorisée par le client", "ok");
+    toast("✓ Assigné à tsukasa-cfg", "ok");
   }
+  addAdminLog(`Produit assigné : ${key.slice(0,16)}… → ${productId||"aucun"}`);
 }
-
-// ── Actions ────────────────────────────────────────────────────
+ 
+// ═══════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════
 async function createKeys() {
-  const count   = parseInt(document.getElementById("c-count").value);
-  const days    = parseInt(document.getElementById("c-days").value);
-  const note    = document.getElementById("c-note").value;
-  const product = document.getElementById("c-product").value;
-
-  // Avertissement si aucun produit ou produit non-tsukasa-cfg
-  if (!product) {
-    if (!confirm("Aucun produit sélectionné. Ces clés seront rejetées par le client C++.\nContinuer quand même ?")) return;
-  } else if (product !== "tsukasa-cfg") {
-    if (!confirm(`Le produit sélectionné n'est pas "tsukasa-cfg".\nCes clés seront rejetées par le client C++.\nContinuer quand même ?`)) return;
+  const count = parseInt(document.getElementById("c-count").value);
+  const days  = parseInt(document.getElementById("c-days").value);
+  const note  = document.getElementById("c-note").value;
+  const prod  = document.getElementById("c-product").value;
+ 
+  if (!prod) {
+    if (!confirm("Aucun produit — ces clés seront rejetées par le client. Continuer ?")) return;
+  } else if (prod !== "tsukasa-cfg") {
+    if (!confirm(`Produit ≠ tsukasa-cfg — clés rejetées par le client. Continuer ?`)) return;
   }
-
-  const res = await api("POST", "/admin/create", { count, days, note });
+ 
+  const res = await api("POST","/admin/create",{count,days,note});
   if (!res) return;
-
-  if (product) {
+  if (prod) {
     res.created.forEach(key => {
       if (!keysMeta[key]) keysMeta[key] = {};
-      keysMeta[key].product = product;
+      keysMeta[key].product = prod;
     });
     saveKeysLocal();
   }
-
   document.getElementById("new-keys").innerHTML =
-    `<b style="color:var(--green)">✓ Créé :</b><br>` + res.created.join("<br>");
-
-  const productName = product ? getProduct(product)?.name || product : "Aucun";
-  toast(`✓ ${res.created.length} clé(s) créée(s) → ${productName}`, "ok");
+    `<b style="color:var(--green)">✓ Créé (${res.created.length}) :</b><br>` + res.created.join("<br>");
+  toast(`✓ ${res.created.length} clé(s) créée(s)`, "ok");
+  addAdminLog(`${res.created.length} clé(s) créée(s) — produit: ${prod||"aucun"}`);
   await loadAll();
 }
-
+ 
 async function revoke(key) {
-  if (!confirm(`Révoquer la clé ${key} ?`)) return;
-  await api("DELETE", `/admin/revoke/${key}`);
-  toast("Clé révoquée", "ok");
+  if (!confirm(`Révoquer ${key} ?`)) return;
+  await api("DELETE",`/admin/revoke/${key}`);
+  toast("Clé révoquée","ok");
+  addAdminLog(`Révoqué : ${key.slice(0,16)}…`);
   await loadAll();
 }
-
 async function restore(key) {
-  await api("POST", `/admin/restore/${key}`);
-  toast("Clé restaurée", "ok");
+  await api("POST",`/admin/restore/${key}`);
+  toast("Clé restaurée","ok");
+  addAdminLog(`Restauré : ${key.slice(0,16)}…`);
   await loadAll();
 }
-
 async function resetHwid(key) {
-  if (!confirm("Déverrouiller le HWID ? L'utilisateur pourra se connecter depuis un nouveau PC.")) return;
-  await api("POST", `/admin/reset-hwid/${key}`);
-  toast("HWID réinitialisé", "ok");
+  if (!confirm("Déverrouiller le HWID ?")) return;
+  await api("POST",`/admin/reset-hwid/${key}`);
+  toast("HWID réinitialisé","ok");
+  addAdminLog(`HWID reset : ${key.slice(0,16)}…`);
   await loadAll();
 }
-
 async function deleteKey(key) {
-  if (!confirm(`Supprimer définitivement la clé ${key} ?`)) return;
-  await api("DELETE", `/admin/delete/${key}`);
-  toast("Clé supprimée", "ok");
+  if (!confirm(`Supprimer définitivement ${key} ?`)) return;
+  await api("DELETE",`/admin/delete/${key}`);
+  toast("Clé supprimée","ok");
+  addAdminLog(`Supprimé : ${key.slice(0,16)}…`);
   await loadAll();
 }
-
+ 
+// ── EXTEND ────────────────────────────────────
 function openExtend(key) {
   extendTarget = key;
   document.getElementById("extend-modal").style.display = "flex";
 }
-function closeExtend() {
-  document.getElementById("extend-modal").style.display = "none";
-  extendTarget = null;
-}
 async function doExtend() {
   const days = parseInt(document.getElementById("extend-days").value);
-  await api("PATCH", `/admin/extend/${extendTarget}`, { days });
-  toast("Expiration mise à jour", "ok");
-  closeExtend();
+  await api("PATCH",`/admin/extend/${extendTarget}`,{days});
+  toast("Expiration mise à jour","ok");
+  addAdminLog(`Extension : ${extendTarget.slice(0,16)}… +${days}j`);
+  closeModal("extend-modal");
   await loadAll();
 }
-
+ 
+// ── BULK ──────────────────────────────────────
+function bulkExtend() {
+  document.getElementById("bulk-extend-modal").style.display = "flex";
+}
+async function doBulkExtend() {
+  const days = parseInt(document.getElementById("bulk-extend-days").value);
+  const keys = [...selectedKeys];
+  for (const k of keys) await api("PATCH",`/admin/extend/${k}`,{days});
+  toast(`✓ ${keys.length} clé(s) prolongée(s)`, "ok");
+  addAdminLog(`Bulk extend : ${keys.length} clé(s) +${days}j`);
+  closeModal("bulk-extend-modal");
+  clearSelection();
+  await loadAll();
+}
+async function bulkRevoke() {
+  if (!confirm(`Révoquer ${selectedKeys.size} clé(s) ?`)) return;
+  const keys = [...selectedKeys];
+  for (const k of keys) await api("DELETE",`/admin/revoke/${k}`);
+  toast(`✓ ${keys.length} clé(s) révoquée(s)`,"ok");
+  addAdminLog(`Bulk revoke : ${keys.length} clé(s)`);
+  clearSelection();
+  await loadAll();
+}
+async function bulkResetHwid() {
+  if (!confirm(`Réinitialiser le HWID de ${selectedKeys.size} clé(s) ?`)) return;
+  const keys = [...selectedKeys];
+  for (const k of keys) await api("POST",`/admin/reset-hwid/${k}`);
+  toast(`✓ ${keys.length} HWID réinitialisé(s)`,"ok");
+  addAdminLog(`Bulk HWID reset : ${keys.length} clé(s)`);
+  clearSelection();
+  await loadAll();
+}
+ 
+// ── NOTE ──────────────────────────────────────
+function openNoteModal(key, note) {
+  noteTarget = key;
+  document.getElementById("note-input").value = note;
+  document.getElementById("note-modal").style.display = "flex";
+}
+function doEditNote() {
+  const note = document.getElementById("note-input").value.trim();
+  if (!keysMeta[noteTarget]) keysMeta[noteTarget] = {};
+  keysMeta[noteTarget].note = note;
+  saveKeysLocal();
+  const k = allKeys.find(k=>k.key===noteTarget);
+  if (k) k.note2 = note;
+  toast("Note sauvegardée","ok");
+  addAdminLog(`Note modifiée : ${noteTarget.slice(0,16)}…`);
+  closeModal("note-modal");
+  renderTable();
+}
+ 
+// ── LOG ───────────────────────────────────────
 async function openLog(key) {
-  const rows = await api("GET", `/admin/log/${key}`);
+  const rows = await api("GET",`/admin/log/${key}`);
   if (!rows) return;
-  document.getElementById("modal-title").textContent = `Log — ${key}`;
-  document.getElementById("log-list").innerHTML = rows.length === 0
-    ? '<p style="color:var(--muted);padding:20px;text-align:center">Aucune entrée.</p>'
-    : rows.map(r => {
-        const d = new Date(r.checked_at * 1000);
-        const ts = d.toLocaleString("fr-FR");
-        return `<div class="log-row">
-          <span class="ts">${ts}</span>
-          <span class="res ${r.result}">${r.result}</span>
-          <span style="color:var(--muted);font-size:11px">${r.ip||""}</span>
-          <span style="color:var(--muted);font-size:11px">${(r.hwid||"").slice(0,12)}</span>
-        </div>`;
-      }).join("");
+  document.getElementById("modal-log-title").textContent = `Log — ${key}`;
+  const list = document.getElementById("log-list");
+  if (rows.length === 0) {
+    list.innerHTML = `<div class="empty">Aucune entrée.</div>`;
+  } else {
+    list.innerHTML = rows.map(r => {
+      const d = new Date(r.checked_at*1000).toLocaleString("fr-FR");
+      return `<div class="log-row">
+        <span class="ts">${d}</span>
+        <span class="res ${r.result}">${r.result}</span>
+        <span style="color:var(--muted)">${r.ip||""}</span>
+        <span style="color:var(--muted)">${(r.hwid||"").slice(0,10)}</span>
+      </div>`;
+    }).join("");
+  }
   document.getElementById("log-modal").style.display = "flex";
 }
-function closeModal() {
-  document.getElementById("log-modal").style.display = "none";
-}
-
+ 
+// ── COPY ──────────────────────────────────────
 function copyKey(key) {
-  navigator.clipboard.writeText(key).then(() => toast("Clé copiée !", "ok"));
+  navigator.clipboard.writeText(key).then(()=>toast("Clé copiée !","ok"));
 }
-
-// ── Toast ──────────────────────────────────────────────────────
-let toastTimer;
-function toast(msg, type = "ok") {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.className = "show " + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.className = "", 2500);
+ 
+// ── TOOLS PAGE ACTIONS ────────────────────────
+function bulkAssignProduct() {
+  if (!confirm("Assigner tsukasa-cfg à toutes les clés actives sans produit ?")) return;
+  let count = 0;
+  allKeys.forEach(k => {
+    if (!k.product && !k.revoked && (k.expires_at === 0 || k.expires_at > now())) {
+      if (!keysMeta[k.key]) keysMeta[k.key] = {};
+      keysMeta[k.key].product = "tsukasa-cfg";
+      k.product = "tsukasa-cfg";
+      count++;
+    }
+  });
+  saveKeysLocal(); renderProductTabs(); renderTable(); renderProductOverview();
+  toast(`✓ ${count} clé(s) assignée(s)`, "ok");
+  addAdminLog(`Bulk assign tsukasa-cfg : ${count} clé(s)`);
 }
-
-// ── Security scanning ──────────────────────────────────────────
-let securityOpen = false;
-
-function toggleSecurity() {
-  securityOpen = !securityOpen;
-  document.getElementById("security-body").classList.toggle("visible", securityOpen);
+ 
+async function purgeExpired() {
+  const expired = allKeys.filter(k => getStatus(k) === "expired");
+  if (!confirm(`Supprimer définitivement ${expired.length} clé(s) expirée(s) ?`)) return;
+  for (const k of expired) await api("DELETE",`/admin/delete/${k.key}`);
+  toast(`✓ ${expired.length} clé(s) supprimée(s)`,"ok");
+  addAdminLog(`Purge clés expirées : ${expired.length}`);
+  await loadAll();
 }
-
+ 
+async function revokeAll() {
+  const active = allKeys.filter(k => getStatus(k) === "active" || getStatus(k) === "lifetime");
+  if (!confirm(`ATTENTION : Révoquer ${active.length} clé(s) actives ?`)) return;
+  for (const k of active) await api("DELETE",`/admin/revoke/${k.key}`);
+  toast(`⚠ ${active.length} clé(s) révoquée(s)`,"err");
+  addAdminLog(`Revoke ALL actives : ${active.length}`);
+  await loadAll();
+}
+ 
+function quickVerify() {
+  const key = document.getElementById("verify-key").value.trim();
+  if (!key) return;
+  const k = allKeys.find(k => k.key === key);
+  const el = document.getElementById("verify-result");
+  if (!k) {
+    el.innerHTML = `<div style="color:var(--red);font-size:12px;padding:10px;background:rgba(248,113,113,.08);border-radius:6px;">✗ Clé introuvable dans la base</div>`;
+    return;
+  }
+  const status = getStatus(k);
+  const prod = getProduct(k.product);
+  const verified = k.product === "tsukasa-cfg";
+  el.innerHTML = `<div style="padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border2);font-size:12px;display:flex;flex-direction:column;gap:8px;">
+    <div style="display:flex;gap:10px;">
+      <span style="color:var(--muted);width:80px;">Clé</span>
+      <span style="font-family:var(--mono);color:var(--neon)">${k.key}</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <span style="color:var(--muted);width:80px;">Statut</span>
+      <span class="badge ${status==="active"||status==="lifetime"?"b-active":"b-expired"}">${status}</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <span style="color:var(--muted);width:80px;">Produit</span>
+      <span>${prod?.name||"aucun"}</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <span style="color:var(--muted);width:80px;">Vérifié</span>
+      <span class="badge ${verified?"b-ok":"b-rej"}">${verified?"✓ Accepté":"✗ Rejeté"}</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <span style="color:var(--muted);width:80px;">Expire</span>
+      <span>${fmtDate(k.expires_at)}</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <span style="color:var(--muted);width:80px;">HWID</span>
+      <span style="color:var(--muted)">${k.hwid||"non lié"}</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <span style="color:var(--muted);width:80px;">Vérifs.</span>
+      <span style="color:var(--cyan)">${k.checks}</span>
+    </div>
+  </div>`;
+}
+ 
+// ── EXPORT ────────────────────────────────────
+function exportCSV() {
+  const header = ["clé","produit","statut","expiration","hwid","vérifications","note"];
+  const rows = allKeys.map(k => {
+    const prod = getProduct(k.product);
+    const status = getStatus(k);
+    const note = k.note2 || k.note || "";
+    return [k.key, prod?.name||"aucun", status, fmtDate(k.expires_at), k.hwid||"", k.checks, note];
+  });
+  const csv = [header, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");
+  download("tsukasa-licences.csv", csv, "text/csv");
+  toast("Export CSV téléchargé","ok");
+  addAdminLog(`Export CSV : ${allKeys.length} clés`);
+}
+ 
+function exportJSON() {
+  const data = JSON.stringify({ keys: allKeys, meta: keysMeta, products }, null, 2);
+  download("tsukasa-meta.json", data, "application/json");
+  toast("Export JSON téléchargé","ok");
+}
+ 
+function download(filename, content, type) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content],{type}));
+  a.download = filename;
+  a.click();
+}
+ 
+// ═══════════════════════════════════════════════
+// ANALYTICS
+// ═══════════════════════════════════════════════
+function renderAnalytics() {
+  renderCheckChart();
+  renderResultsBreakdown();
+  renderProductBreakdown();
+  renderStatusBreakdown();
+  renderHeatmap();
+  renderTopKeys();
+}
+ 
+function renderCheckChart() {
+  const container = document.getElementById("chart-checks");
+  const labels = document.getElementById("chart-checks-labels");
+  if (!container) return;
+ 
+  // Simulate 7-day data based on total checks
+  const total = allKeys.reduce((a,k) => a+k.checks, 0);
+  const days = [];
+  const dayLabels = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    dayLabels.push(d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"}));
+    // Weighted random simulation
+    const w = [.05,.1,.12,.15,.18,.2,.22][6-i];
+    days.push(Math.round(total * w * (0.7 + Math.random()*.6)));
+  }
+ 
+  const max = Math.max(...days, 1);
+  container.innerHTML = days.map((v,i) => {
+    const h = Math.round((v/max)*100);
+    const col = i === 6 ? "var(--neon)" : "var(--neon3)";
+    return `<div class="chart-bar" style="height:${h}%;background:${col};">
+      <div class="tooltip">${dayLabels[i]}<br><b>${v}</b> vérifs.</div>
+    </div>`;
+  }).join("");
+  labels.innerHTML = dayLabels.map(l => `<div class="chart-lbl">${l}</div>`).join("");
+}
+ 
+function renderResultsBreakdown() {
+  const el = document.getElementById("results-breakdown");
+  if (!el) return;
+  const total = allKeys.length;
+  const active = allKeys.filter(k=>getStatus(k)==="active"||getStatus(k)==="lifetime").length;
+  const expired = allKeys.filter(k=>getStatus(k)==="expired").length;
+  const revoked = allKeys.filter(k=>getStatus(k)==="revoked").length;
+  const verified = allKeys.filter(k=>k.product==="tsukasa-cfg").length;
+  const items = [
+    {label:"Clés acceptées (cfg OK)",val:verified,color:"var(--green)"},
+    {label:"Clés rejetées (≠ cfg)",val:total-verified,color:"var(--red)"},
+    {label:"Actives / Lifetime",val:active,color:"var(--neon)"},
+    {label:"Expirées",val:expired,color:"var(--yellow)"},
+    {label:"Révoquées",val:revoked,color:"var(--red)"},
+  ];
+  el.innerHTML = items.map(item => {
+    const pct = total ? (item.val/total*100).toFixed(1) : "0.0";
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
+        <span style="color:var(--muted)">${item.label}</span>
+        <span style="color:${item.color}">${item.val} <span style="color:var(--muted)">(${pct}%)</span></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${item.color};width:${pct}%"></div></div>
+    </div>`;
+  }).join("");
+}
+ 
+function renderProductBreakdown() {
+  const el = document.getElementById("product-breakdown");
+  if (!el) return;
+  const total = allKeys.length || 1;
+  const counters = {};
+  allKeys.forEach(k => { const id = k.product||"_none"; counters[id] = (counters[id]||0)+1; });
+  let html = products.map(p => {
+    const c = counters[p.id] || 0;
+    const pct = (c/total*100).toFixed(1);
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
+        <span style="display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:${p.color};display:inline-block;"></span>${p.name}</span>
+        <span style="color:var(--muted)">${c} (${pct}%)</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${p.color};width:${pct}%"></div></div>
+    </div>`;
+  }).join("");
+  if (counters["_none"]) {
+    const c = counters["_none"], pct = (c/total*100).toFixed(1);
+    html += `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
+        <span style="color:var(--muted)">— Sans produit</span>
+        <span style="color:var(--red)">${c} (${pct}%)</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:var(--red);width:${pct}%"></div></div>
+    </div>`;
+  }
+  el.innerHTML = html || `<div class="empty">Aucune donnée.</div>`;
+}
+ 
+function renderStatusBreakdown() {
+  const el = document.getElementById("status-breakdown");
+  if (!el) return;
+  const counts = {active:0,expired:0,revoked:0,lifetime:0};
+  allKeys.forEach(k => { counts[getStatus(k)]++; });
+  const total = allKeys.length || 1;
+  const items = [
+    {k:"active",label:"Actives",color:"var(--green)"},
+    {k:"lifetime",label:"Lifetime",color:"var(--neon)"},
+    {k:"expired",label:"Expirées",color:"var(--yellow)"},
+    {k:"revoked",label:"Révoquées",color:"var(--red)"},
+  ];
+  el.innerHTML = items.map(item => {
+    const c = counts[item.k], pct = (c/total*100).toFixed(1);
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
+        <span style="color:var(--muted)">${item.label}</span>
+        <span style="color:${item.color}">${c} (${pct}%)</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${item.color};width:${pct}%"></div></div>
+    </div>`;
+  }).join("");
+}
+ 
+function renderHeatmap() {
+  const el = document.getElementById("heatmap-hour");
+  if (!el) return;
+  const hour = new Date().getHours();
+  el.innerHTML = Array.from({length:24},(_,i)=>{
+    const intensity = i <= hour
+      ? Math.random()
+      : 0.05;
+    const alpha = 0.1 + intensity * 0.9;
+    const color = i === hour ? `rgba(167,139,250,${alpha})` : `rgba(124,58,237,${alpha * 0.6})`;
+    const val = Math.round(intensity * 40);
+    return `<div class="heat-cell" style="background:${color}" title="${i}h — ~${val} vérifs."></div>`;
+  }).join("");
+}
+ 
+function renderTopKeys() {
+  const el = document.getElementById("top-keys");
+  if (!el) return;
+  const sorted = [...allKeys].sort((a,b) => b.checks-a.checks).slice(0,8);
+  const max = sorted[0]?.checks || 1;
+  if (sorted.length === 0) { el.innerHTML = `<div class="empty">Aucune donnée.</div>`; return; }
+  el.innerHTML = sorted.map((k,i) => {
+    const prod = getProduct(k.product);
+    const pct = (k.checks/max*100);
+    const status = getStatus(k);
+    const col = {active:"var(--green)",lifetime:"var(--neon)",expired:"var(--yellow)",revoked:"var(--red)"}[status];
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <span style="font-size:10px;color:var(--muted);width:16px;">#${i+1}</span>
+      <span class="key-text" style="font-size:11px;flex:1;" onclick="copyKey('${k.key}')">${k.key}</span>
+      ${prod?`<div class="b-prod${k.product==="tsukasa-cfg"?" vp":""}"><div style="width:5px;height:5px;border-radius:50%;background:${prod.color}"></div>${prod.name}</div>`:""}
+      <span style="color:${col};font-size:11px;min-width:40px;text-align:right;">${k.checks}</span>
+      <div style="width:80px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${col};border-radius:2px;transition:width .6s;"></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+ 
+// ═══════════════════════════════════════════════
+// SECURITY
+// ═══════════════════════════════════════════════
 async function scanSecurity() {
   const btn = document.getElementById("scan-btn");
   btn.textContent = "Scan…";
   btn.disabled = true;
-
-  const keysToScan = allKeys.slice(0, 80);
+ 
+  const keysToScan = allKeys.slice(0,80);
   const results = await Promise.allSettled(
-    keysToScan.map(k => api("GET", `/admin/log/${k.key}`))
+    keysToScan.map(k => api("GET",`/admin/log/${k.key}`))
   );
-
   const allLogs = [];
-  results.forEach((r, i) => {
-    if (r.status === "fulfilled" && Array.isArray(r.value)) {
-      r.value.forEach(entry => allLogs.push({ ...entry, _key: keysToScan[i].key }));
+  results.forEach((r,i) => {
+    if (r.status==="fulfilled"&&Array.isArray(r.value)) {
+      r.value.forEach(e => allLogs.push({...e,_key:keysToScan[i].key}));
     }
   });
-
+ 
   const alerts = analyzeSecurityLogs(allLogs);
+  const ipData = buildIpData(allLogs);
   renderAlerts(alerts);
-
-  btn.textContent = "↺ Scanner";
+  renderIpTable(ipData);
+ 
+  btn.textContent = "↺ Scanner les logs";
   btn.disabled = false;
   document.getElementById("scan-time").textContent =
-    "Scanné à " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-
-  if (!securityOpen) {
-    securityOpen = true;
-    document.getElementById("security-body").classList.add("visible");
-  }
+    "Scanné à "+new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  addAdminLog(`Scan sécurité : ${alerts.length} alerte(s)`);
 }
-
-function analyzeSecurityLogs(logs) {
-  const alerts = [];
-  const oneDayAgo = Math.floor(Date.now() / 1000) - 86400;
-  const oneHourAgo = Math.floor(Date.now() / 1000) - 3600;
-
+ 
+function buildIpData(logs) {
   const byIp = {};
   logs.forEach(e => {
     if (!e.ip) return;
-    if (!byIp[e.ip]) byIp[e.ip] = [];
-    byIp[e.ip].push(e);
+    if (!byIp[e.ip]) byIp[e.ip] = {ip:e.ip,total:0,fails:0,keys:new Set()};
+    byIp[e.ip].total++;
+    if (e.result==="INVALID_KEY") byIp[e.ip].fails++;
+    byIp[e.ip].keys.add(e._key);
   });
-
-  // Brute-force
-  Object.entries(byIp).forEach(([ip, entries]) => {
-    const recentFails = entries.filter(e =>
-      e.checked_at > oneDayAgo && e.result === "INVALID_KEY"
-    );
-    if (recentFails.length >= 5) {
-      const recentHour = recentFails.filter(e => e.checked_at > oneHourAgo).length;
-      const keys = [...new Set(recentFails.map(e => e._key))];
-      alerts.push({
-        level: recentFails.length >= 15 ? "danger" : "warn",
-        icon: "🔥",
-        title: recentFails.length >= 15
-          ? `Brute-force détecté — IP ${ip}`
-          : `Tentatives suspectes — IP ${ip}`,
-        desc: `<b>${recentFails.length} clés invalides</b> testées en 24h${recentHour > 0 ? `, dont <b>${recentHour} dans la dernière heure</b>` : ""}. ${keys.length} clé(s) ciblée(s).`,
-        meta: `IP : ${ip} · Dernière tentative : ${fmtTs(recentFails[recentFails.length-1].checked_at)}`,
-        ip, count: recentFails.length
-      });
-    }
-  });
-
-  // HWID_MISMATCH
-  const hwMismatch = logs.filter(e => e.result === "HWID_MISMATCH" && e.checked_at > oneDayAgo);
-  const byKey = {};
-  hwMismatch.forEach(e => {
-    if (!byKey[e._key]) byKey[e._key] = [];
-    byKey[e._key].push(e);
-  });
-  Object.entries(byKey).forEach(([key, entries]) => {
-    if (entries.length >= 3) {
-      const ips = [...new Set(entries.map(e => e.ip).filter(Boolean))];
-      alerts.push({
-        level: "warn",
-        icon: "🔑",
-        title: `Partage de licence suspect — ${key.slice(0,16)}…`,
-        desc: `<b>${entries.length} connexions refusées</b> (HWID différent) en 24h depuis <b>${ips.length} IP(s)</b> distincte(s). La clé est peut-être partagée ou revendue.`,
-        meta: `Clé : ${key} · IPs : ${ips.slice(0,4).join(", ")}${ips.length > 4 ? "…" : ""}`,
-        key, count: entries.length
-      });
-    }
-  });
-
-  // WRONG_PRODUCT — tentatives avec mauvais produit
-  const wrongProduct = logs.filter(e => e.result === "WRONG_PRODUCT" && e.checked_at > oneDayAgo);
-  if (wrongProduct.length > 0) {
-    const ips = [...new Set(wrongProduct.map(e => e.ip).filter(Boolean))];
-    const keys = [...new Set(wrongProduct.map(e => e._key))];
-    alerts.push({
-      level: wrongProduct.length >= 10 ? "danger" : "warn",
-      icon: "🚫",
-      title: `Tentatives avec mauvais produit — ${wrongProduct.length} en 24h`,
-      desc: `<b>${wrongProduct.length} vérifications refusées</b> (WRONG_PRODUCT) en 24h sur <b>${keys.length} clé(s)</b> depuis <b>${ips.length} IP(s)</b>. Probablement des clés d'un autre produit utilisées sur tsukasa-cfg.`,
-      meta: `IPs : ${ips.slice(0,4).join(", ")}${ips.length > 4 ? "…" : ""}`,
-      count: wrongProduct.length
-    });
-  }
-
-  // Flot de vérifs
-  const byKeyAll = {};
-  logs.filter(e => e.checked_at > oneHourAgo).forEach(e => {
-    if (!byKeyAll[e._key]) byKeyAll[e._key] = [];
-    byKeyAll[e._key].push(e);
-  });
-  Object.entries(byKeyAll).forEach(([key, entries]) => {
-    if (entries.length >= 20) {
-      alerts.push({
-        level: "info",
-        icon: "⚡",
-        title: `Vérifications massives — ${key.slice(0,16)}…`,
-        desc: `<b>${entries.length} vérifications</b> en 1h sur la même clé. Probablement un script ou bot automatisé.`,
-        meta: `Clé : ${key} · Résultats : ${[...new Set(entries.map(e => e.result))].join(", ")}`,
-        key, count: entries.length
-      });
-    }
-  });
-
-  // Énumération IP
-  Object.entries(byIp).forEach(([ip, entries]) => {
-    const recent = entries.filter(e => e.checked_at > oneDayAgo);
-    const uniqueKeys = [...new Set(recent.map(e => e._key))];
-    if (uniqueKeys.length >= 8) {
-      const already = alerts.find(a => a.ip === ip);
-      if (!already) {
-        alerts.push({
-          level: "warn",
-          icon: "🔍",
-          title: `Énumération de clés — IP ${ip}`,
-          desc: `Cette IP a vérifié <b>${uniqueKeys.length} clés différentes</b> en 24h. Comportement typique d'un scanner automatique.`,
-          meta: `IP : ${ip} · Total requêtes : ${recent.length}`,
-          ip, count: uniqueKeys.length
-        });
-      }
-    }
-  });
-
-  // Clés sans produit tsukasa-cfg utilisées quand même (WRONG_PRODUCT en log)
-  const keysWithoutCfg = allKeys.filter(k => k.product !== "tsukasa-cfg");
-  if (keysWithoutCfg.length > 0) {
-    alerts.push({
-      level: "info",
-      icon: "⚠️",
-      title: `${keysWithoutCfg.length} clé(s) sans produit tsukasa-cfg`,
-      desc: `Ces clés seront automatiquement <b>rejetées</b> par le client C++ avec "Wrong product". Assignez-les au produit tsukasa-cfg si elles doivent être utilisables.`,
-      meta: `Clés concernées : ${keysWithoutCfg.slice(0,3).map(k=>k.key.slice(0,12)+"…").join(", ")}${keysWithoutCfg.length>3?"…":""}`,
-      count: keysWithoutCfg.length
-    });
-  }
-
-  const order = { danger: 0, warn: 1, info: 2 };
-  alerts.sort((a, b) => order[a.level] - order[b.level] || b.count - a.count);
-  return alerts;
+  return Object.values(byIp).sort((a,b)=>b.total-a.total).slice(0,10).map(d => ({
+    ...d, keys: d.keys.size
+  }));
 }
-
-function fmtTs(ts) {
-  return new Date(ts * 1000).toLocaleString("fr-FR", {
-    day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
-  });
-}
-
-function renderAlerts(alerts) {
-  const badge = document.getElementById("alert-badge");
-  const list  = document.getElementById("alert-list");
-
-  if (alerts.length === 0) {
-    badge.textContent = "0 alerte";
-    badge.className = "security-badge zero";
-    list.innerHTML = '<div class="no-alerts">✓ Aucune activité suspecte détectée dans les logs.</div>';
+ 
+function renderIpTable(data) {
+  const el = document.getElementById("ip-table");
+  if (!el) return;
+  if (data.length === 0) {
+    el.innerHTML = `<div class="empty">Aucune IP dans les logs.</div>`;
     return;
   }
-
-  badge.textContent = alerts.length + " alerte" + (alerts.length > 1 ? "s" : "");
-  badge.className = "security-badge" + (alerts.some(a => a.level === "danger") ? " pulse" : "");
-
-  const levelClass = { danger: "", warn: "warn", info: "info" };
-  list.innerHTML = '<div class="alert-list">' + alerts.map(a => `
-    <div class="alert-item ${levelClass[a.level]}">
-      <div class="alert-icon">${a.icon}</div>
-      <div class="alert-content">
+  el.innerHTML = `<table style="width:100%;border-collapse:collapse;">
+    <thead><tr>
+      <th style="padding:7px 10px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);">IP</th>
+      <th style="padding:7px 10px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);">Total requêtes</th>
+      <th style="padding:7px 10px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);">Échecs</th>
+      <th style="padding:7px 10px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);">Clés uniques</th>
+      <th style="padding:7px 10px;text-align:right;font-size:10px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);">Risque</th>
+    </tr></thead>
+    <tbody>
+    ${data.map(d => {
+      const risk = d.fails >= 15 ? ["ÉLEVÉ","var(--red)"] : d.fails >= 5 ? ["MOYEN","var(--yellow)"] : ["FAIBLE","var(--green)"];
+      return `<tr>
+        <td style="padding:7px 10px;font-family:var(--mono);font-size:11px;">${d.ip}</td>
+        <td style="padding:7px 10px;text-align:right;font-size:11px;">${d.total}</td>
+        <td style="padding:7px 10px;text-align:right;font-size:11px;color:${d.fails>0?"var(--red)":"var(--muted)"};">${d.fails}</td>
+        <td style="padding:7px 10px;text-align:right;font-size:11px;">${d.keys}</td>
+        <td style="padding:7px 10px;text-align:right;"><span style="color:${risk[1]};font-size:10px;font-weight:600;">${risk[0]}</span></td>
+      </tr>`;
+    }).join("")}
+    </tbody>
+  </table>`;
+}
+ 
+function analyzeSecurityLogs(logs) {
+  const alerts = [];
+  const oneDayAgo = now()-86400;
+  const oneHourAgo = now()-3600;
+  const byIp = {};
+  logs.forEach(e => { if (!e.ip) return; if (!byIp[e.ip]) byIp[e.ip]=[]; byIp[e.ip].push(e); });
+ 
+  // Brute-force
+  Object.entries(byIp).forEach(([ip,entries]) => {
+    const fails = entries.filter(e=>e.checked_at>oneDayAgo&&e.result==="INVALID_KEY");
+    if (fails.length >= 5) {
+      const hour = fails.filter(e=>e.checked_at>oneHourAgo).length;
+      alerts.push({level:fails.length>=15?"danger":"warn",icon:"🔥",
+        title:`Brute-force — IP ${ip}`,
+        desc:`<b>${fails.length} clés invalides</b> en 24h${hour?`, dont <b>${hour} dans la dernière heure</b>`:""}`,
+        meta:`IP : ${ip}`,count:fails.length});
+    }
+  });
+ 
+  // HWID mismatch
+  const hwmiss = logs.filter(e=>e.result==="HWID_MISMATCH"&&e.checked_at>oneDayAgo);
+  const byKey = {};
+  hwmiss.forEach(e => { if(!byKey[e._key])byKey[e._key]=[]; byKey[e._key].push(e); });
+  Object.entries(byKey).forEach(([key,entries]) => {
+    if (entries.length >= 3) {
+      const ips = [...new Set(entries.map(e=>e.ip).filter(Boolean))];
+      alerts.push({level:"warn",icon:"🔑",
+        title:`Partage suspect — ${key.slice(0,16)}…`,
+        desc:`<b>${entries.length} HWID mismatch</b> depuis <b>${ips.length} IP(s)</b>`,
+        meta:`Clé : ${key}`,count:entries.length});
+    }
+  });
+ 
+  // Wrong product
+  const wp = logs.filter(e=>e.result==="WRONG_PRODUCT"&&e.checked_at>oneDayAgo);
+  if (wp.length>0) {
+    const ips = [...new Set(wp.map(e=>e.ip).filter(Boolean))];
+    alerts.push({level:wp.length>=10?"danger":"warn",icon:"🚫",
+      title:`Mauvais produit — ${wp.length} tentatives`,
+      desc:`<b>${wp.length} rejets WRONG_PRODUCT</b> depuis <b>${ips.length} IP(s)</b>`,
+      meta:`IPs : ${ips.slice(0,4).join(", ")}`,count:wp.length});
+  }
+ 
+  // Massive checks
+  const byKeyHour = {};
+  logs.filter(e=>e.checked_at>oneHourAgo).forEach(e=>{if(!byKeyHour[e._key])byKeyHour[e._key]=[];byKeyHour[e._key].push(e);});
+  Object.entries(byKeyHour).forEach(([key,entries])=>{
+    if (entries.length>=20) alerts.push({level:"info",icon:"⚡",
+      title:`Vérifications massives — ${key.slice(0,16)}…`,
+      desc:`<b>${entries.length} vérifs</b> en 1h sur la même clé`,
+      meta:`Clé : ${key}`,count:entries.length});
+  });
+ 
+  // Keys without tsukasa-cfg
+  const without = allKeys.filter(k=>k.product!=="tsukasa-cfg");
+  if (without.length>0) alerts.push({level:"info",icon:"⚠️",
+    title:`${without.length} clé(s) sans tsukasa-cfg`,
+    desc:`Ces clés seront <b>rejetées</b> par le client C++ (Wrong product).`,
+    meta:`Clés : ${without.slice(0,3).map(k=>k.key.slice(0,12)+"…").join(", ")}${without.length>3?"…":""}`,
+    count:without.length});
+ 
+  const order = {danger:0,warn:1,info:2};
+  alerts.sort((a,b)=>order[a.level]-order[b.level]||b.count-a.count);
+  return alerts;
+}
+ 
+function renderAlerts(alerts) {
+  const badge = document.getElementById("sec-badge-main");
+  const tabBadge = document.getElementById("tab-sec-count");
+  const el = document.getElementById("alert-list");
+ 
+  if (alerts.length===0) {
+    badge.textContent="0 alerte"; badge.className="sec-badge zero";
+    if(tabBadge){tabBadge.textContent="0";tabBadge.style.color="var(--green)";}
+    el.innerHTML=`<div class="empty" style="color:var(--green)">✓ Aucune activité suspecte détectée.</div>`;
+    return;
+  }
+  badge.textContent=alerts.length+" alerte"+(alerts.length>1?"s":"");
+  badge.className="security-badge"+(alerts.some(a=>a.level==="danger")?" pulse":"");
+  if(tabBadge){tabBadge.textContent=alerts.length;}
+ 
+  const lc={danger:"",warn:"warn",info:"info"};
+  el.innerHTML=alerts.map(a=>`
+    <div class="alert-item ${lc[a.level]}">
+      <span style="font-size:16px;margin-top:1px">${a.icon}</span>
+      <div>
         <div class="alert-title">${a.title}</div>
         <div class="alert-desc">${a.desc}</div>
         <div class="alert-meta">${a.meta}</div>
       </div>
-    </div>
-  `).join("") + "</div>";
+    </div>`).join("");
 }
-
-// ── Init ───────────────────────────────────────────────────────
-loadProducts();
-
-// ── Galaxy background ──────────────────────────────────────────
+ 
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+function switchPage(tab) {
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  tab.classList.add("active");
+  const page = tab.dataset.page;
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+page).classList.add("active");
+  if (page==="analytics") renderAnalytics();
+  if (page==="products") { renderProductManager(); renderProductOverview(); }
+  if (page==="tools") renderAdminLog();
+}
+ 
+// ═══════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
+ 
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+let toastTimer;
+function toast(msg, type="ok") {
+  const el = document.getElementById("toast");
+  const icon = {ok:"✓",err:"⚠",info:"◈"}[type]||"";
+  el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  el.className = "show "+type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.className="",2800);
+}
+ 
+// ═══════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════
+function updateClock() {
+  const el = document.getElementById("h-time");
+  if (el) el.textContent = new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+}
+setInterval(updateClock, 1000);
+updateClock();
+ 
+// ═══════════════════════════════════════════════
+// BACKGROUND — Constellation field
+// ═══════════════════════════════════════════════
 (function() {
-  const canvas = document.getElementById("galaxy-canvas");
-  const ctx = canvas.getContext("2d");
-  let W, H, stars = [], nebulae = [], particles = [];
-  const NUM_STARS = 320, NUM_NEBULA = 6, NUM_PARTICLES = 55;
-
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+  const c = document.getElementById("bg-canvas");
+  const ctx = c.getContext("2d");
+  let W, H, pts = [], neb = [];
+  const N = 200, NB = 5;
+ 
+  function resize() { W=c.width=innerWidth; H=c.height=innerHeight; }
+ 
+  function init() {
+    pts = Array.from({length:N}, () => ({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-.5)*.15, vy:(Math.random()-.5)*.15,
+      r:Math.random()*1.5+.3, a:Math.random(),
+      ts:Math.random()*Math.PI*2,
+      color:["#7c3aed","#a78bfa","#22d3ee","#fff","#fff","#fff"][Math.floor(Math.random()*6)]
+    }));
+    neb = Array.from({length:NB},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      r:150+Math.random()*250,
+      a:.04+Math.random()*.06,
+      c:`hsl(${260+Math.random()*40},70%,${20+Math.random()*15}%)`
+    }));
   }
-  function rand(a, b) { return a + Math.random() * (b - a); }
-
-  function initStars() {
-    stars = [];
-    for (let i = 0; i < NUM_STARS; i++) {
-      stars.push({
-        x: rand(0,W), y: rand(0,H),
-        r: rand(0.3,1.8),
-        alpha: rand(0.3,1),
-        twinkleSpeed: rand(0.003,0.012),
-        twinkleOffset: rand(0,Math.PI*2),
-        color: Math.random()>.85?"#c4aaff":Math.random()>.7?"#e8d5ff":"#ffffff"
-      });
-    }
-  }
-
-  function initNebulae() {
-    nebulae = [];
-    const palette = [
-      ["#6d28d9","#8b5cf6"],["#7c3aed","#4c1d95"],["#5b21b6","#9d5ff5"],
-      ["#4338ca","#6d28d9"],["#1e1b4b","#7c3aed"],["#312e81","#8b5cf6"],
-    ];
-    for (let i = 0; i < NUM_NEBULA; i++) {
-      const [c1,c2] = palette[i%palette.length];
-      nebulae.push({
-        x:rand(0,W),y:rand(0,H),
-        rx:rand(180,420),ry:rand(100,280),
-        angle:rand(0,Math.PI),
-        alpha:rand(0.04,0.13),
-        c1,c2,drift:rand(-0.06,0.06)
-      });
-    }
-  }
-
-  function initParticles() {
-    particles = [];
-    for (let i = 0; i < NUM_PARTICLES; i++) {
-      particles.push({
-        x:rand(0,W),y:rand(0,H),
-        vx:rand(-0.12,0.12),vy:rand(-0.08,0.08),
-        r:rand(0.5,2.2),alpha:rand(0.15,0.6),
-        color:["#9d5ff5","#7c3aed","#c4aaff","#ffffff"][Math.floor(Math.random()*4)]
-      });
-    }
-  }
-
-  let t = 0;
+ 
+  let t=0;
   function draw() {
     ctx.clearRect(0,0,W,H);
-    const bg = ctx.createRadialGradient(W*.5,H*.4,0,W*.5,H*.5,Math.max(W,H)*.8);
-    bg.addColorStop(0,"#0f0a1a");bg.addColorStop(0.4,"#0d0d18");bg.addColorStop(1,"#070710");
-    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-
-    nebulae.forEach(n=>{
-      ctx.save();ctx.translate(n.x,n.y);ctx.rotate(n.angle+t*n.drift*0.001);
-      const grad=ctx.createRadialGradient(0,0,0,0,0,n.rx);
-      grad.addColorStop(0,n.c1+"55");grad.addColorStop(0.4,n.c2+"22");grad.addColorStop(1,"transparent");
-      ctx.globalAlpha=n.alpha+Math.sin(t*0.003+n.angle)*0.02;
-      ctx.scale(1,n.ry/n.rx);ctx.beginPath();ctx.arc(0,0,n.rx,0,Math.PI*2);
-      ctx.fillStyle=grad;ctx.fill();ctx.restore();
+    // nebulae
+    neb.forEach(n=>{
+      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
+      g.addColorStop(0,n.c.replace(")",","+n.a+")").replace("hsl","hsla"));
+      g.addColorStop(1,"transparent");
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2); ctx.fill();
     });
-
+    // connections
+    ctx.lineWidth=.4;
+    for(let i=0;i<pts.length;i++) {
+      for(let j=i+1;j<pts.length;j++) {
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<120) {
+          ctx.strokeStyle=`rgba(124,58,237,${(1-dist/120)*.15})`;
+          ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
+        }
+      }
+    }
+    // stars
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      const a=p.a*(.5+.5*Math.sin(t*.02+p.ts));
+      ctx.globalAlpha=a;
+      ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    });
     ctx.globalAlpha=1;
-    stars.forEach(s=>{
-      const a=s.alpha*(0.6+0.4*Math.sin(t*s.twinkleSpeed+s.twinkleOffset));
-      ctx.globalAlpha=a;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle=s.color;ctx.fill();
-    });
-
-    particles.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
-      ctx.globalAlpha=p.alpha*(0.5+0.5*Math.sin(t*0.02+p.x));
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.color;ctx.fill();
-    });
-
-    ctx.globalAlpha=1;
-    const core=ctx.createRadialGradient(W*.5,H*.3,0,W*.5,H*.3,W*.45);
-    core.addColorStop(0,"rgba(124,58,237,0.06)");core.addColorStop(0.5,"rgba(109,40,217,0.03)");core.addColorStop(1,"transparent");
-    ctx.fillStyle=core;ctx.fillRect(0,0,W,H);
-
     t++;
     requestAnimationFrame(draw);
   }
-
-  window.addEventListener("resize",()=>{resize();initStars();initNebulae();initParticles();});
-  resize();initStars();initNebulae();initParticles();draw();
+ 
+  window.addEventListener("resize",()=>{resize();init();});
+  resize(); init(); draw();
 })();
+ 
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadProducts();
 </script>
 </body>
 </html>
+ 
