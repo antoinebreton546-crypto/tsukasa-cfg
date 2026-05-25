@@ -62,17 +62,6 @@
     align-items: center;
     gap: 16px;
   }
-  header .logo {
-    background: var(--neon2);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 5px;
-    letter-spacing: 1px;
-  }
-  header h1 { font-size: 16px; font-weight: 500; color: var(--neon); }
-  header .sep { flex: 1; }
 
   /* ── Login overlay ── */
   #login-screen {
@@ -108,14 +97,24 @@
     border-radius: var(--radius);
     padding: 16px;
     text-align: center;
+    transition: transform .2s cubic-bezier(.34,1.56,.64,1), border-color .3s, box-shadow .3s;
+    animation: fadeSlideUp .4s ease both;
   }
+  .stat-card:nth-child(1) { animation-delay: .05s; }
+  .stat-card:nth-child(2) { animation-delay: .1s; }
+  .stat-card:nth-child(3) { animation-delay: .15s; }
+  .stat-card:nth-child(4) { animation-delay: .2s; }
+  .stat-card:nth-child(5) { animation-delay: .25s; }
+  .stat-card:hover { transform: translateY(-4px) scale(1.02); border-color: var(--neon2); box-shadow: 0 8px 28px rgba(124,58,237,.18); }
   .stat-card .val {
     font-size: 28px;
     font-weight: 600;
     color: var(--neon);
     line-height: 1;
     margin-bottom: 4px;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
   }
+  .stat-card:hover .val { transform: scale(1.08); }
   .stat-card .lbl { color: var(--muted); font-size: 12px; }
   .stat-card.green .val { color: var(--green); }
   .stat-card.yellow .val { color: var(--yellow); }
@@ -158,14 +157,31 @@
     font-size: 13px;
     font-family: inherit;
     cursor: pointer;
-    transition: opacity .15s;
+    transition: transform .18s cubic-bezier(.34,1.56,.64,1), opacity .15s, box-shadow .2s;
     white-space: nowrap;
+    position: relative;
+    overflow: hidden;
   }
-  .btn:hover { opacity: .85; }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background .2s;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .btn:hover { transform: translateY(-2px) scale(1.04); }
+  .btn:hover::after { background: rgba(255,255,255,.07); }
+  .btn:active { transform: scale(.95) translateY(0); transition-duration: .07s; }
   .btn-primary  { background: var(--neon2); color: #fff; }
+  .btn-primary:hover { box-shadow: 0 6px 22px rgba(124,58,237,.5); }
   .btn-green    { background: #065f46; color: var(--green); border: 1px solid var(--green); }
+  .btn-green:hover { box-shadow: 0 4px 16px rgba(52,211,153,.25); }
   .btn-yellow   { background: #431407; color: var(--yellow); border: 1px solid var(--yellow); }
+  .btn-yellow:hover { box-shadow: 0 4px 16px rgba(251,191,36,.2); }
   .btn-red      { background: #450a0a; color: var(--red); border: 1px solid var(--red); }
+  .btn-red:hover { box-shadow: 0 4px 16px rgba(248,113,113,.2); }
   .btn-ghost    { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
   .btn-sm { padding: 4px 10px; font-size: 12px; }
 
@@ -186,9 +202,11 @@
     color: var(--muted);
     font-size: 12px;
     cursor: pointer;
-    transition: all .15s;
+    transition: all .2s cubic-bezier(.34,1.56,.64,1);
   }
-  .filter-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(157,95,245,.1); }
+  .filter-btn:hover { transform: translateY(-1px); border-color: var(--neon2); color: var(--text); }
+  .filter-btn:active { transform: scale(.95); }
+  .filter-btn.active { border-color: var(--neon); color: var(--neon); background: rgba(157,95,245,.1); box-shadow: 0 0 12px rgba(157,95,245,.2); }
 
   /* ── Table ── */
   .table-wrap {
@@ -213,9 +231,13 @@
     padding: 10px 14px;
     border-bottom: 1px solid rgba(42,42,58,.5);
     vertical-align: middle;
+    transition: background .15s;
   }
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,.02); }
+  tr:hover td { background: rgba(157,95,245,.04); }
+  tr.row-enter {
+    animation: rowIn .35s cubic-bezier(.22,1,.36,1) both;
+  }
 
   .key-text {
     font-family: 'Consolas', 'Courier New', monospace;
@@ -223,8 +245,9 @@
     color: var(--neon);
     cursor: pointer;
     user-select: all;
+    transition: color .15s, letter-spacing .2s;
   }
-  .key-text:hover { text-decoration: underline; }
+  .key-text:hover { text-decoration: underline; letter-spacing: .3px; }
 
   .badge {
     display: inline-block;
@@ -232,11 +255,15 @@
     border-radius: 20px;
     font-size: 11px;
     font-weight: 600;
+    transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
   }
+  .badge:hover { transform: scale(1.1); }
   .badge-active   { background: rgba(52,211,153,.12); color: var(--green); border: 1px solid rgba(52,211,153,.3); }
+  .badge-active:hover   { box-shadow: 0 0 10px rgba(52,211,153,.3); }
   .badge-expired  { background: rgba(251,191,36,.12); color: var(--yellow); border: 1px solid rgba(251,191,36,.3); }
   .badge-revoked  { background: rgba(248,113,113,.12); color: var(--red);  border: 1px solid rgba(248,113,113,.3); }
   .badge-lifetime { background: rgba(157,95,245,.12); color: var(--neon); border: 1px solid rgba(157,95,245,.3); }
+  .badge-lifetime:hover { box-shadow: 0 0 12px rgba(157,95,245,.4); }
 
   .actions { display: flex; gap: 6px; }
 
@@ -249,15 +276,15 @@
     border-radius: 8px;
     padding: 12px 20px;
     font-size: 13px;
-    transform: translateY(80px);
+    transform: translateY(80px) scale(.92);
     opacity: 0;
-    transition: all .25s;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
     z-index: 999;
     pointer-events: none;
   }
-  #toast.show { transform: translateY(0); opacity: 1; }
-  #toast.ok   { border-color: var(--green); color: var(--green); }
-  #toast.err  { border-color: var(--red);   color: var(--red); }
+  #toast.show { transform: translateY(0) scale(1); opacity: 1; }
+  #toast.ok   { border-color: var(--green); color: var(--green); box-shadow: 0 4px 20px rgba(52,211,153,.15); }
+  #toast.err  { border-color: var(--red);   color: var(--red);   box-shadow: 0 4px 20px rgba(248,113,113,.15); }
 
   /* ── Modal ── */
   .modal-bg {
@@ -265,6 +292,7 @@
     background: rgba(0,0,0,.6);
     display: flex; align-items: center; justify-content: center;
     z-index: 200;
+    animation: fadeIn .2s ease;
   }
   .modal-box {
     background: var(--bg2);
@@ -273,6 +301,7 @@
     padding: 28px 32px;
     width: 440px;
     max-width: 95vw;
+    animation: modalIn .3s cubic-bezier(.34,1.56,.64,1);
   }
   .modal-box h3 { margin-bottom: 16px; color: var(--neon); }
   .modal-box .log-list { max-height: 300px; overflow-y: auto; }
@@ -282,6 +311,7 @@
     border-bottom: 1px solid var(--border);
     font-size: 12px;
     align-items: center;
+    animation: rowIn .25s ease both;
   }
   .log-row .ts  { color: var(--muted); min-width: 130px; }
   .log-row .res { font-weight: 600; }
@@ -294,6 +324,92 @@
     text-align: center;
     color: var(--muted);
     font-size: 13px;
+  }
+
+  /* ── Input focus glow ── */
+  input:focus, select:focus {
+    border-color: var(--neon2);
+    box-shadow: 0 0 0 3px rgba(124,58,237,.15);
+  }
+
+  /* ── Product tab animations ── */
+  .product-tab {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .2s cubic-bezier(.34,1.56,.64,1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .product-tab:hover { border-color: var(--neon2); color: var(--text); transform: translateY(-2px); }
+  .product-tab:active { transform: scale(.95); }
+  .product-tab.active { border-color: var(--neon); color: var(--neon); background: rgba(157,95,245,.12); box-shadow: 0 0 14px rgba(157,95,245,.2); }
+  .product-tab .tab-count {
+    background: rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 11px;
+    transition: background .2s;
+  }
+  .product-tab.active .tab-count { background: rgba(157,95,245,.25); }
+  .product-tab .tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── Logo pulse ── */
+  header .logo {
+    background: var(--neon2);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 5px;
+    letter-spacing: 1px;
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+  header h1 { font-size: 16px; font-weight: 500; color: var(--neon); }
+  header .sep { flex: 1; }
+
+  /* ── Keyframes ── */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(.88) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes logoPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+    50%       { box-shadow: 0 0 16px 4px rgba(124,58,237,.45); }
+  }
+  @keyframes countUp {
+    from { transform: translateY(8px); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  .shimmer-text {
+    background: linear-gradient(90deg, var(--neon) 0%, #e0c8ff 40%, var(--neon) 80%);
+    background-size: 400px 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
   }
 
   /* ── Product tabs ── */
@@ -876,13 +992,31 @@ async function loadAll() {
   document.getElementById("login-screen").style.display = "none";
   loadKeysMeta();
   allKeys = applyMeta(keys);
-  document.getElementById("s-total").textContent   = stats.total;
-  document.getElementById("s-active").textContent  = stats.active;
-  document.getElementById("s-expired").textContent = stats.expired;
-  document.getElementById("s-revoked").textContent = stats.revoked;
-  document.getElementById("s-checks").textContent  = stats.checksToday;
+  animateCount("s-total",   stats.total);
+  animateCount("s-active",  stats.active);
+  animateCount("s-expired", stats.expired);
+  animateCount("s-revoked", stats.revoked);
+  animateCount("s-checks",  stats.checksToday);
   renderProductTabs();
   renderTable();
+}
+
+function animateCount(id, target) {
+  const el = document.getElementById(id);
+  const start = parseInt(el.textContent) || 0;
+  const end = parseInt(target) || 0;
+  if (start === end) { el.textContent = end; return; }
+  const duration = 600;
+  const startTime = performance.now();
+  el.style.animation = "countUp .3s ease both";
+  function step(now) {
+    const p = Math.min((now - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(start + (end - start) * ease);
+    if (p < 1) requestAnimationFrame(step);
+    else { el.textContent = end; el.style.animation = ""; }
+  }
+  requestAnimationFrame(step);
 }
 
 function refresh() { loadAll(); }
@@ -933,7 +1067,7 @@ function renderTable() {
     return;
   }
 
-  tbody.innerHTML = rows.map(r => {
+  tbody.innerHTML = rows.map((r, i) => {
     const status = getStatus(r);
     const badgeClass = `badge-${status}`;
     const badgeLabel = { active: "Actif", expired: "Expiré", revoked: "Révoqué", lifetime: "Lifetime" }[status];
@@ -952,10 +1086,11 @@ function renderTable() {
       ? `<button class="btn btn-green btn-sm" onclick="restore('${r.key}')">Restaurer</button>`
       : `<button class="btn btn-red btn-sm" onclick="revoke('${r.key}')">Révoquer</button>`;
 
-    return `<tr>
+    const delay = Math.min(i * 35, 400);
+    return `<tr class="row-enter" style="animation-delay:${delay}ms">
       <td><span class="key-text" onclick="copyKey('${r.key}')" title="Cliquer pour copier">${r.key}</span></td>
       <td>
-        <select class="prod-select" style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;padding:3px 6px" onchange="setKeyProduct('${r.key}', this.value)">
+        <select class="prod-select" style="background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;padding:3px 6px;transition:border-color .2s" onchange="setKeyProduct('${r.key}', this.value)">
           ${prodOptions}
         </select>
       </td>
