@@ -412,6 +412,88 @@
   }
   .product-chip .chip-name:hover { border-color: var(--neon2); color: var(--neon); }
 
+  /* ── Security alerts ── */
+  .security-panel {
+    background: rgba(22,22,31,0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(248,113,113,.25);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .security-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    justify-content: space-between;
+  }
+  .security-header-left { display: flex; align-items: center; gap: 10px; }
+  .security-title { font-size: 13px; font-weight: 600; color: var(--red); letter-spacing: .3px; }
+  .security-badge {
+    background: rgba(248,113,113,.15);
+    border: 1px solid rgba(248,113,113,.35);
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--red);
+  }
+  .security-badge.zero { color: var(--green); background: rgba(52,211,153,.1); border-color: rgba(52,211,153,.3); }
+  .security-body { display: none; margin-top: 14px; }
+  .security-body.visible { display: block; }
+
+  .alert-list { display: flex; flex-direction: column; gap: 8px; }
+  .alert-item {
+    background: rgba(248,113,113,.05);
+    border: 1px solid rgba(248,113,113,.15);
+    border-left: 3px solid var(--red);
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .alert-item.warn {
+    background: rgba(251,191,36,.05);
+    border-color: rgba(251,191,36,.15);
+    border-left-color: var(--yellow);
+  }
+  .alert-item.info {
+    background: rgba(157,95,245,.05);
+    border-color: rgba(157,95,245,.15);
+    border-left-color: var(--neon);
+  }
+  .alert-icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+  .alert-content { flex: 1; }
+  .alert-title { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+  .alert-item .alert-title { color: var(--red); }
+  .alert-item.warn .alert-title { color: var(--yellow); }
+  .alert-item.info .alert-title { color: var(--neon); }
+  .alert-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .alert-desc b { color: var(--text); font-weight: 500; }
+  .alert-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .alert-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+
+  .no-alerts {
+    text-align: center;
+    padding: 18px;
+    font-size: 12px;
+    color: var(--green);
+  }
+  .security-scanning {
+    text-align: center;
+    padding: 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  @keyframes pulse-red {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+  .pulse { animation: pulse-red 1.4s infinite; }
+
   /* ── Product badge in table ── */
   .prod-badge {
     display: inline-flex;
@@ -459,6 +541,24 @@
     <div class="stat-card yellow"><div class="val" id="s-expired">—</div><div class="lbl">Expirées</div></div>
     <div class="stat-card red"><div class="val" id="s-revoked">—</div><div class="lbl">Révoquées</div></div>
     <div class="stat-card"><div class="val" id="s-checks">—</div><div class="lbl">Vérif. 24h</div></div>
+  </div>
+
+  <!-- Security alerts -->
+  <div class="security-panel" id="security-panel">
+    <div class="security-header" onclick="toggleSecurity()">
+      <div class="security-header-left">
+        <span class="security-title">🛡 Alertes de sécurité</span>
+        <span class="security-badge zero" id="alert-badge">—</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();scanSecurity()" id="scan-btn">↺ Scanner</button>
+        <span style="font-size:11px;color:var(--muted)" id="scan-time"></span>
+        <span style="font-size:11px;color:var(--muted)">▶</span>
+      </div>
+    </div>
+    <div class="security-body" id="security-body">
+      <div class="security-scanning" id="alert-list"><em>Cliquez sur "Scanner" pour analyser les logs.</em></div>
+    </div>
   </div>
 
   <!-- Product Manager -->
@@ -986,6 +1086,183 @@ function toast(msg, type = "ok") {
   el.className = "show " + type;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.className = "", 2500);
+}
+
+// ── Security scanning ─────────────────────────────────────────
+let securityOpen = false;
+
+function toggleSecurity() {
+  securityOpen = !securityOpen;
+  document.getElementById("security-body").classList.toggle("visible", securityOpen);
+}
+
+async function scanSecurity() {
+  const btn = document.getElementById("scan-btn");
+  btn.textContent = "Scan…";
+  btn.disabled = true;
+
+  // Fetch logs for all keys in parallel (max 80 to avoid flood)
+  const keysToScan = allKeys.slice(0, 80);
+  const results = await Promise.allSettled(
+    keysToScan.map(k => api("GET", `/admin/log/${k.key}`))
+  );
+
+  // Flatten all log entries with their key
+  const allLogs = [];
+  results.forEach((r, i) => {
+    if (r.status === "fulfilled" && Array.isArray(r.value)) {
+      r.value.forEach(entry => allLogs.push({ ...entry, _key: keysToScan[i].key }));
+    }
+  });
+
+  const alerts = analyzeSecurityLogs(allLogs);
+  renderAlerts(alerts);
+
+  btn.textContent = "↺ Scanner";
+  btn.disabled = false;
+  document.getElementById("scan-time").textContent =
+    "Scanné à " + new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
+  if (!securityOpen) {
+    securityOpen = true;
+    document.getElementById("security-body").classList.add("visible");
+  }
+}
+
+function analyzeSecurityLogs(logs) {
+  const alerts = [];
+  const oneDayAgo = Math.floor(Date.now() / 1000) - 86400;
+  const oneHourAgo = Math.floor(Date.now() / 1000) - 3600;
+
+  // Group by IP
+  const byIp = {};
+  logs.forEach(e => {
+    if (!e.ip) return;
+    if (!byIp[e.ip]) byIp[e.ip] = [];
+    byIp[e.ip].push(e);
+  });
+
+  // ① Brute-force: IP avec beaucoup d'échecs (INVALID_KEY) en 24h
+  Object.entries(byIp).forEach(([ip, entries]) => {
+    const recentFails = entries.filter(e =>
+      e.checked_at > oneDayAgo && e.result === "INVALID_KEY"
+    );
+    if (recentFails.length >= 5) {
+      const recentHour = recentFails.filter(e => e.checked_at > oneHourAgo).length;
+      const keys = [...new Set(recentFails.map(e => e._key))];
+      alerts.push({
+        level: recentFails.length >= 15 ? "danger" : "warn",
+        icon: "🔥",
+        title: recentFails.length >= 15
+          ? `Brute-force détecté — IP ${ip}`
+          : `Tentatives suspectes — IP ${ip}`,
+        desc: `<b>${recentFails.length} clés invalides</b> testées en 24h${recentHour > 0 ? `, dont <b>${recentHour} dans la dernière heure</b>` : ""}. ${keys.length} clé(s) ciblée(s).`,
+        meta: `IP : ${ip} · Dernière tentative : ${fmtTs(recentFails[recentFails.length-1].checked_at)}`,
+        ip,
+        count: recentFails.length
+      });
+    }
+  });
+
+  // ② HWID_MISMATCH en série : quelqu'un partage sa licence
+  const hwMismatch = logs.filter(e => e.result === "HWID_MISMATCH" && e.checked_at > oneDayAgo);
+  const byKey = {};
+  hwMismatch.forEach(e => {
+    if (!byKey[e._key]) byKey[e._key] = [];
+    byKey[e._key].push(e);
+  });
+  Object.entries(byKey).forEach(([key, entries]) => {
+    if (entries.length >= 3) {
+      const ips = [...new Set(entries.map(e => e.ip).filter(Boolean))];
+      alerts.push({
+        level: "warn",
+        icon: "🔑",
+        title: `Partage de licence suspect — ${key.slice(0,16)}…`,
+        desc: `<b>${entries.length} connexions refusées</b> (HWID différent) en 24h depuis <b>${ips.length} IP(s)</b> distincte(s). La clé est peut-être partagée ou revendue.`,
+        meta: `Clé : ${key} · IPs : ${ips.slice(0,4).join(", ")}${ips.length > 4 ? "…" : ""}`,
+        key,
+        count: entries.length
+      });
+    }
+  });
+
+  // ③ Flot de vérifs : une clé vérifiée à très haute fréquence (bot/script)
+  const byKeyAll = {};
+  logs.filter(e => e.checked_at > oneHourAgo).forEach(e => {
+    if (!byKeyAll[e._key]) byKeyAll[e._key] = [];
+    byKeyAll[e._key].push(e);
+  });
+  Object.entries(byKeyAll).forEach(([key, entries]) => {
+    if (entries.length >= 20) {
+      alerts.push({
+        level: "info",
+        icon: "⚡",
+        title: `Vérifications massives — ${key.slice(0,16)}…`,
+        desc: `<b>${entries.length} vérifications</b> en 1h sur la même clé. Probablement un script ou bot automatisé.`,
+        meta: `Clé : ${key} · Résultats : ${[...new Set(entries.map(e => e.result))].join(", ")}`,
+        key,
+        count: entries.length
+      });
+    }
+  });
+
+  // ④ IP qui scanne plusieurs clés différentes (enumération)
+  Object.entries(byIp).forEach(([ip, entries]) => {
+    const recent = entries.filter(e => e.checked_at > oneDayAgo);
+    const uniqueKeys = [...new Set(recent.map(e => e._key))];
+    if (uniqueKeys.length >= 8) {
+      const already = alerts.find(a => a.ip === ip);
+      if (!already) {
+        alerts.push({
+          level: "warn",
+          icon: "🔍",
+          title: `Énumération de clés — IP ${ip}`,
+          desc: `Cette IP a vérifié <b>${uniqueKeys.length} clés différentes</b> en 24h. Comportement typique d'un scanner automatique.`,
+          meta: `IP : ${ip} · Total requêtes : ${recent.length}`,
+          ip,
+          count: uniqueKeys.length
+        });
+      }
+    }
+  });
+
+  // Trier : danger > warn > info, puis par count décroissant
+  const order = { danger: 0, warn: 1, info: 2 };
+  alerts.sort((a, b) => order[a.level] - order[b.level] || b.count - a.count);
+  return alerts;
+}
+
+function fmtTs(ts) {
+  return new Date(ts * 1000).toLocaleString("fr-FR", {
+    day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
+  });
+}
+
+function renderAlerts(alerts) {
+  const badge = document.getElementById("alert-badge");
+  const list  = document.getElementById("alert-list");
+
+  if (alerts.length === 0) {
+    badge.textContent = "0 alerte";
+    badge.className = "security-badge zero";
+    list.innerHTML = '<div class="no-alerts">✓ Aucune activité suspecte détectée dans les logs.</div>';
+    return;
+  }
+
+  badge.textContent = alerts.length + " alerte" + (alerts.length > 1 ? "s" : "");
+  badge.className = "security-badge" + (alerts.some(a => a.level === "danger") ? " pulse" : "");
+
+  const levelClass = { danger: "", warn: "warn", info: "info" };
+  list.innerHTML = '<div class="alert-list">' + alerts.map(a => `
+    <div class="alert-item ${levelClass[a.level]}">
+      <div class="alert-icon">${a.icon}</div>
+      <div class="alert-content">
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.desc}</div>
+        <div class="alert-meta">${a.meta}</div>
+      </div>
+    </div>
+  `).join("") + "</div>";
 }
 
 // ── Init ──────────────────────────────────────────────────────
