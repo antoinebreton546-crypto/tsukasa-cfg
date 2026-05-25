@@ -26,6 +26,31 @@
     font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
     font-size: 14px;
     min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Galaxy background ── */
+  #galaxy-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  header, .main, #login-screen, #log-modal, #extend-modal, #product-modal, #toast {
+    position: relative;
+    z-index: 1;
+  }
+  header {
+    background: rgba(22,22,31,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .create-panel, .table-wrap, .product-manager, .stat-card, .login-box, .modal-box {
+    background: rgba(22,22,31,0.75) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   /* ── Header ── */
@@ -379,6 +404,14 @@
     padding: 2px;
   }
 
+  /* ── Chip rename ── */
+  .product-chip .chip-name {
+    cursor: pointer;
+    border-bottom: 1px dashed transparent;
+    transition: border-color .15s;
+  }
+  .product-chip .chip-name:hover { border-color: var(--neon2); color: var(--neon); }
+
   /* ── Product badge in table ── */
   .prod-badge {
     display: inline-flex;
@@ -395,6 +428,8 @@
 </style>
 </head>
 <body>
+
+<canvas id="galaxy-canvas"></canvas>
 
 <!-- Login -->
 <div id="login-screen">
@@ -591,6 +626,30 @@ function addProduct() {
   toast("Produit ajouté", "ok");
 }
 
+function recolorProduct(id, color) {
+  const p = products.find(p => p.id === id);
+  if (!p) return;
+  p.color = color;
+  saveProducts();
+  renderProductManager();
+  renderProductTabs();
+  renderTable();
+}
+
+function renameProduct(id) {
+  const p = products.find(p => p.id === id);
+  if (!p) return;
+  const newName = prompt("Nouveau nom du produit :", p.name);
+  if (!newName || !newName.trim()) return;
+  p.name = newName.trim();
+  saveProducts();
+  renderProductManager();
+  renderProductTabs();
+  renderProductSelect();
+  renderTable();
+  toast("Produit renommé", "ok");
+}
+
 function deleteProduct(id) {
   if (!confirm("Supprimer ce produit ? Les clés associées perdront leur catégorie.")) return;
   products = products.filter(p => p.id !== id);
@@ -618,7 +677,8 @@ function renderProductManager() {
   list.innerHTML = products.map(p => `
     <div class="product-chip">
       <div class="chip-dot" style="background:${p.color}"></div>
-      <span>${p.name}</span>
+      <span class="chip-name" onclick="renameProduct('${p.id}')" title="Cliquer pour renommer">${p.name}</span>
+      <input type="color" value="${p.color}" style="width:20px;height:20px;border:none;background:none;cursor:pointer;padding:0;border-radius:3px" onchange="recolorProduct('${p.id}', this.value)" title="Changer la couleur">
       <span class="chip-del" onclick="deleteProduct('${p.id}')" title="Supprimer">×</span>
     </div>
   `).join("");
@@ -930,6 +990,149 @@ function toast(msg, type = "ok") {
 
 // ── Init ──────────────────────────────────────────────────────
 loadProducts();
+
+// ── Galaxy background ──────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById("galaxy-canvas");
+  const ctx = canvas.getContext("2d");
+  let W, H, stars = [], nebulae = [], particles = [];
+  const NUM_STARS = 320;
+  const NUM_NEBULA = 6;
+  const NUM_PARTICLES = 55;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < NUM_STARS; i++) {
+      stars.push({
+        x: rand(0, W), y: rand(0, H),
+        r: rand(0.3, 1.8),
+        alpha: rand(0.3, 1),
+        twinkleSpeed: rand(0.003, 0.012),
+        twinkleOffset: rand(0, Math.PI * 2),
+        color: Math.random() > 0.85 ? "#c4aaff" : Math.random() > 0.7 ? "#e8d5ff" : "#ffffff"
+      });
+    }
+  }
+
+  function initNebulae() {
+    nebulae = [];
+    const palette = [
+      ["#6d28d9","#8b5cf6"],
+      ["#7c3aed","#4c1d95"],
+      ["#5b21b6","#9d5ff5"],
+      ["#4338ca","#6d28d9"],
+      ["#1e1b4b","#7c3aed"],
+      ["#312e81","#8b5cf6"],
+    ];
+    for (let i = 0; i < NUM_NEBULA; i++) {
+      const [c1, c2] = palette[i % palette.length];
+      nebulae.push({
+        x: rand(0, W), y: rand(0, H),
+        rx: rand(180, 420), ry: rand(100, 280),
+        angle: rand(0, Math.PI),
+        alpha: rand(0.04, 0.13),
+        c1, c2,
+        drift: rand(-0.06, 0.06)
+      });
+    }
+  }
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < NUM_PARTICLES; i++) {
+      particles.push({
+        x: rand(0, W), y: rand(0, H),
+        vx: rand(-0.12, 0.12), vy: rand(-0.08, 0.08),
+        r: rand(0.5, 2.2),
+        alpha: rand(0.15, 0.6),
+        color: ["#9d5ff5","#7c3aed","#c4aaff","#ffffff"][Math.floor(Math.random()*4)]
+      });
+    }
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Deep space bg gradient
+    const bg = ctx.createRadialGradient(W*0.5, H*0.4, 0, W*0.5, H*0.5, Math.max(W, H)*0.8);
+    bg.addColorStop(0, "#0f0a1a");
+    bg.addColorStop(0.4, "#0d0d18");
+    bg.addColorStop(1, "#070710");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Nebulae
+    nebulae.forEach(n => {
+      ctx.save();
+      ctx.translate(n.x, n.y);
+      ctx.rotate(n.angle + t * n.drift * 0.001);
+      const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, n.rx);
+      grad.addColorStop(0, n.c1 + "55");
+      grad.addColorStop(0.4, n.c2 + "22");
+      grad.addColorStop(1, "transparent");
+      ctx.globalAlpha = n.alpha + Math.sin(t * 0.003 + n.angle) * 0.02;
+      ctx.scale(1, n.ry / n.rx);
+      ctx.beginPath();
+      ctx.arc(0, 0, n.rx, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // Stars
+    ctx.globalAlpha = 1;
+    stars.forEach(s => {
+      const a = s.alpha * (0.6 + 0.4 * Math.sin(t * s.twinkleSpeed + s.twinkleOffset));
+      ctx.globalAlpha = a;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.color;
+      ctx.fill();
+    });
+
+    // Floating particles
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = W;
+      if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H;
+      if (p.y > H) p.y = 0;
+      ctx.globalAlpha = p.alpha * (0.5 + 0.5 * Math.sin(t * 0.02 + p.x));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    });
+
+    // Central glow (violet core)
+    ctx.globalAlpha = 1;
+    const core = ctx.createRadialGradient(W*0.5, H*0.3, 0, W*0.5, H*0.3, W*0.45);
+    core.addColorStop(0, "rgba(124,58,237,0.06)");
+    core.addColorStop(0.5, "rgba(109,40,217,0.03)");
+    core.addColorStop(1, "transparent");
+    ctx.fillStyle = core;
+    ctx.fillRect(0, 0, W, H);
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener("resize", () => { resize(); initStars(); initNebulae(); initParticles(); });
+  resize();
+  initStars();
+  initNebulae();
+  initParticles();
+  draw();
+})();
 </script>
 </body>
 </html>
